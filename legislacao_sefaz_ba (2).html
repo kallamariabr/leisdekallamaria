@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle Legislativo · SEFAZ-BA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── ACESSIBILIDADE: alto contraste dark ── */
+:root {
+  --bg:     #080b12;
+  --panel:  #0f1520;
+  --panel2: #141c2b;
+  --panel3: #1a2235;
+  --border: #253148;
+  --border2:#2e3f5e;
+  --tx:     #edf2ff;   /* branco-azulado — máximo contraste */
+  --tx2:    #a8b8d8;   /* secundário — ainda legível */
+  --tx3:    #6b80a4;   /* terciário — labels */
+  --acc:    #00f0cc;   /* verde-ciano vivo */
+  --acc2:   #00c9aa;
+  --acc-dim:rgba(0,240,204,.12);
+  --acc-bd: rgba(0,240,204,.35);
+  --blue:   #5b9dff;
+  --blue-dim:rgba(91,157,255,.12);
+  --gold:   #ffc930;
+  --gold-dim:rgba(255,201,48,.12);
+  --red:    #ff7070;
+  --red-dim:rgba(255,112,112,.12);
+  --ora:    #ff8c3a;
+  --ora-dim:rgba(255,140,58,.12);
+  --purple: #b69dff;
+  --grn:    #5ddc7a;
+  --grn-dim:rgba(93,220,122,.12);
+  --r:6px;
+  /* prioridade cores */
+  --p1:#ff5f5f; --p2:#ff7043; --p3:#ff9040; --p4:#ffb040;
+  --p5:#ffc930; --p6:#d4e000; --p7:#7fe060;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--tx);
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  line-height:1.5;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── HEADER ── */
+.hdr{
+  background:var(--panel);
+  border-bottom:2px solid var(--border2);
+  padding:0 28px;
+  height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:70;
+}
+.hdr-brand{display:flex;align-items:center;gap:12px;}
+.hdr-icon{
+  width:38px;height:38px;
+  background:var(--acc);
+  border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.hdr-title{font-size:17px;font-weight:800;color:var(--tx);letter-spacing:-.3px;}
+.hdr-sub{font-size:11px;color:var(--tx3);font-family:'JetBrains Mono',monospace;margin-top:1px;}
+.hdr-btns{display:flex;gap:8px;}
+
+/* ── BUTTONS ── */
+.btn{
+  padding:8px 16px;border-radius:var(--r);
+  font-size:13px;font-weight:700;
+  cursor:pointer;border:none;
+  transition:all .15s;
+  font-family:'Inter',sans-serif;
+  display:inline-flex;align-items:center;gap:6px;
+  letter-spacing:.1px;
+}
+.btn-acc{background:var(--acc);color:#000;}
+.btn-acc:hover{background:#00d9b8;transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--tx2);border:1.5px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--tx2);color:var(--tx);}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1.5px solid rgba(255,112,112,.3);}
+.btn-danger:hover{background:rgba(255,112,112,.22);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+
+/* ── TABS ── */
+.tabs{
+  background:var(--panel);
+  border-bottom:2px solid var(--border2);
+  padding:0 28px;
+  display:flex;
+  position:sticky;top:60px;z-index:60;
+  overflow-x:auto;
+}
+.tab{
+  padding:15px 22px;
+  font-size:13px;font-weight:700;
+  color:var(--tx3);
+  background:none;border:none;
+  cursor:pointer;
+  border-bottom:3px solid transparent;
+  transition:all .15s;
+  white-space:nowrap;
+  font-family:'Inter',sans-serif;
+  letter-spacing:.2px;
+}
+.tab:hover{color:var(--tx2);}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc);}
+
+/* ── CONTENT ── */
+.content{padding:26px 28px;max-width:1600px;position:relative;z-index:1;}
+
+/* ── KPI STRIP ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:24px;}
+.kpi{
+  background:var(--panel);border:1.5px solid var(--border2);border-radius:10px;
+  padding:16px 18px;position:relative;overflow:hidden;
+}
+.kpi-bar{position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-lbl{font-size:11px;color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.kpi-val{font-size:28px;font-weight:800;color:var(--tx);line-height:1;}
+.kpi-sub{font-size:12px;color:var(--tx2);margin-top:5px;font-weight:500;}
+
+/* ── FILTER / DISC BAR ── */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
+.pill{
+  padding:7px 15px;border-radius:20px;
+  font-size:12px;font-weight:700;
+  cursor:pointer;border:1.5px solid var(--border2);
+  background:none;color:var(--tx2);
+  transition:all .15s;font-family:'Inter',sans-serif;
+}
+.pill:hover{border-color:var(--acc);color:var(--acc);}
+.pill.active{background:var(--acc);border-color:var(--acc);color:#000;}
+
+/* ── SEARCH ── */
+.search-inp{
+  background:var(--panel2);border:1.5px solid var(--border2);border-radius:var(--r);
+  padding:9px 14px;font-size:13px;color:var(--tx);font-family:'JetBrains Mono',monospace;
+  font-weight:500;outline:none;transition:border-color .15s;width:300px;
+}
+.search-inp:focus{border-color:var(--acc);}
+.search-inp::placeholder{color:var(--tx3);}
+
+/* ── SEC HEADING ── */
+.sec-head{display:flex;align-items:center;gap:12px;margin:22px 0 14px;}
+.sec-head:first-child{margin-top:0;}
+.sec-line{flex:1;height:1.5px;background:var(--border2);}
+.sec-tag{font-size:11px;color:var(--tx3);letter-spacing:1.5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;font-weight:700;white-space:nowrap;}
+
+/* ── LEI CARD ── */
+.lei-card{background:var(--panel);border:1.5px solid var(--border2);border-radius:12px;margin-bottom:10px;overflow:hidden;transition:border-color .15s;}
+.lei-card:hover{border-color:var(--border2);}
+.lei-card-hdr{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;user-select:none;}
+.lei-color-bar{width:4px;height:38px;border-radius:2px;flex-shrink:0;}
+.lei-info{flex:1;min-width:0;}
+.lei-nome{font-size:14px;font-weight:800;color:var(--tx);}
+.lei-sub{font-size:12px;color:var(--tx3);margin-top:2px;font-family:'JetBrains Mono',monospace;font-weight:500;}
+.lei-prog-wrap{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.lei-pct{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;}
+.lei-prog-bar{width:90px;height:5px;background:var(--panel3);border-radius:3px;overflow:hidden;}
+.lei-prog-fill{height:100%;border-radius:3px;transition:width .5s ease;}
+.lei-chev{color:var(--tx3);font-size:13px;transition:transform .2s;flex-shrink:0;}
+.lei-chev.open{transform:rotate(180deg);}
+
+/* ── LEI BODY ── */
+.lei-body{border-top:1.5px solid var(--border2);display:none;}
+.lei-body.open{display:block;}
+
+/* ── ARTICLES TABLE ── */
+.at{width:100%;border-collapse:collapse;}
+.at th{
+  padding:10px 16px;font-size:11px;letter-spacing:1.2px;color:var(--tx3);
+  background:var(--panel2);border-bottom:1.5px solid var(--border2);
+  text-align:left;font-family:'JetBrains Mono',monospace;font-weight:700;text-transform:uppercase;
+}
+.at td{padding:11px 16px;font-size:13px;border-bottom:1.5px solid var(--border);vertical-align:top;}
+.at tr:last-child td{border-bottom:none;}
+.at tr:hover td{background:rgba(255,255,255,.018);}
+
+.art-range{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--tx2);white-space:nowrap;}
+.art-tema{color:var(--tx);font-weight:700;font-size:13px;}
+.art-nota-txt{color:var(--gold);font-size:12px;margin-top:4px;line-height:1.5;font-weight:500;}
+
+/* ── CHIPS ── */
+.chips-wrap{display:flex;flex-wrap:wrap;gap:5px;min-height:24px;}
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;border-radius:5px;
+  font-size:12px;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  background:var(--acc-dim);color:var(--acc);border:1.5px solid var(--acc-bd);
+}
+.chip.revisao{background:var(--gold-dim);color:var(--gold);border-color:rgba(255,201,48,.35);}
+.chip.dificil{background:var(--red-dim);color:var(--red);border-color:rgba(255,112,112,.3);}
+.chip-rm{cursor:pointer;opacity:.5;font-size:10px;transition:opacity .15s;background:none;border:none;color:inherit;padding:0;line-height:1;}
+.chip-rm:hover{opacity:1;}
+
+/* ── ART INPUT ROW ── */
+.art-inp-row{display:flex;gap:7px;align-items:center;margin-top:7px;}
+.art-inp{
+  background:var(--panel2);border:1.5px solid var(--border2);border-radius:var(--r);
+  padding:6px 11px;font-size:12px;color:var(--tx);font-family:'JetBrains Mono',monospace;font-weight:600;
+  outline:none;transition:border-color .15s;width:190px;
+}
+.art-inp:focus{border-color:var(--acc);}
+.art-inp::placeholder{color:var(--tx3);}
+.add-btn{
+  background:var(--acc-dim);border:1.5px solid var(--acc-bd);border-radius:var(--r);
+  padding:6px 12px;font-size:12px;font-weight:700;color:var(--acc);
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;
+}
+.add-btn:hover{background:rgba(0,240,204,.22);}
+
+/* ── STATUS BUTTONS ── */
+.st-row{display:flex;gap:5px;}
+.sb{padding:5px 11px;border-radius:5px;font-size:11px;font-weight:800;cursor:pointer;border:1.5px solid;transition:all .15s;font-family:'JetBrains Mono',monospace;background:none;}
+.sb-ok{border-color:rgba(93,220,122,.25);color:rgba(93,220,122,.45);}
+.sb-ok:hover,.sb-ok.act{background:var(--grn-dim);color:var(--grn);border-color:rgba(93,220,122,.6);}
+.sb-rv{border-color:rgba(255,201,48,.25);color:rgba(255,201,48,.45);}
+.sb-rv:hover,.sb-rv.act{background:var(--gold-dim);color:var(--gold);border-color:rgba(255,201,48,.6);}
+.sb-df{border-color:rgba(255,112,112,.25);color:rgba(255,112,112,.45);}
+.sb-df:hover,.sb-df.act{background:var(--red-dim);color:var(--red);border-color:rgba(255,112,112,.5);}
+.st-lbl{font-size:11px;color:var(--tx3);margin-top:5px;font-weight:600;}
+
+/* ── PRAZOS TABLE ── */
+.prazos-wrap{background:var(--panel);border:1.5px solid var(--border2);border-radius:12px;overflow:hidden;}
+.pt{width:100%;border-collapse:collapse;}
+.pt th{
+  padding:11px 14px;font-size:11px;letter-spacing:1.2px;color:var(--tx3);
+  background:var(--panel2);border-bottom:1.5px solid var(--border2);
+  text-align:left;font-family:'JetBrains Mono',monospace;font-weight:700;text-transform:uppercase;
+}
+.pt td{padding:12px 14px;font-size:13px;border-bottom:1.5px solid var(--border);vertical-align:top;}
+.pt tr:last-child td{border-bottom:none;}
+.pt tr:hover td{background:rgba(255,255,255,.018);}
+.pt-art{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--tx);white-space:nowrap;}
+.pt-tema{font-size:13px;font-weight:700;color:var(--tx);}
+.pt-ctx{font-size:12px;color:var(--tx2);line-height:1.6;font-weight:500;}
+
+/* ── PRAZO TAGS ── */
+.ptag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:5px;font-size:12px;font-weight:800;
+  white-space:nowrap;border:1.5px solid;font-family:'JetBrains Mono',monospace;
+}
+.ptag-d{background:var(--acc-dim);color:var(--acc);border-color:var(--acc-bd);}
+.ptag-a{background:var(--blue-dim);color:var(--blue);border-color:rgba(91,157,255,.35);}
+.ptag-m{background:var(--gold-dim);color:var(--gold);border-color:rgba(255,201,48,.35);}
+.ptag-p{background:var(--purple-dim,rgba(182,157,255,.1));color:var(--purple);border-color:rgba(182,157,255,.35);}
+.ptag-n{background:var(--panel3);color:var(--tx3);border-color:var(--border2);}
+
+/* ── DIFF BADGE ── */
+.diff{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.d-max{background:var(--red-dim);color:var(--red);}
+.d-alta{background:var(--ora-dim);color:var(--ora);}
+.d-med{background:var(--gold-dim);color:var(--gold);}
+.d-baixa{background:var(--grn-dim);color:var(--grn);}
+
+/* ── GABARITO ── */
+.score-bar{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  background:var(--panel);border:1.5px solid var(--border2);border-radius:10px;
+  padding:16px 20px;margin-bottom:18px;
+}
+.score-info{font-size:13px;color:var(--tx2);font-weight:600;}
+.score-big{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:800;color:var(--acc);}
+.fill-inp{
+  background:var(--panel2);border:1.5px solid var(--border2);border-radius:var(--r);
+  padding:7px 12px;font-size:13px;color:var(--tx);width:100%;
+  font-family:'JetBrains Mono',monospace;font-weight:600;outline:none;transition:border-color .15s;
+}
+.fill-inp:focus{border-color:var(--acc);}
+.fill-inp.ok{border-color:var(--grn);background:var(--grn-dim);color:var(--grn);}
+.fill-inp.err{border-color:var(--red);background:var(--red-dim);color:var(--red);}
+.fill-inp.rev{border-color:var(--gold);background:var(--gold-dim);color:var(--gold);}
+.gab-check{background:var(--grn-dim);border:1.5px solid rgba(93,220,122,.4);border-radius:5px;padding:5px 10px;font-size:12px;font-weight:800;color:var(--grn);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;display:block;width:100%;margin-bottom:5px;}
+.gab-check:hover{background:rgba(93,220,122,.22);}
+.gab-ver{background:var(--panel3);border:1.5px solid var(--border2);border-radius:5px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--tx2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;display:block;width:100%;}
+.gab-ver:hover{border-color:var(--gold);color:var(--gold);}
+.gab-table{width:100%;border-collapse:collapse;}
+.gab-table th{padding:11px 14px;font-size:11px;letter-spacing:1.2px;color:var(--tx3);background:var(--panel2);border-bottom:1.5px solid var(--border2);text-align:left;font-family:'JetBrains Mono',monospace;font-weight:700;text-transform:uppercase;}
+.gab-table td{padding:12px 14px;font-size:13px;border-bottom:1.5px solid var(--border);vertical-align:top;}
+.gab-table tr:last-child td{border-bottom:none;}
+.gab-table tr:hover td{background:rgba(255,255,255,.018);}
+
+/* ── MODAL ── */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;}
+.modal-ov.open{display:flex;}
+.modal{background:var(--panel);border:1.5px solid var(--border2);border-radius:14px;width:540px;max-height:90vh;overflow-y:auto;padding:28px;position:relative;}
+.modal-title{font-size:20px;font-weight:800;color:var(--tx);margin-bottom:22px;}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.fg label{font-size:11px;color:var(--tx3);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.fg input,.fg select,.fg textarea{background:var(--panel2);border:1.5px solid var(--border2);border-radius:var(--r);padding:9px 13px;font-size:13px;color:var(--tx);font-family:'Inter',sans-serif;font-weight:500;outline:none;transition:border-color .15s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--acc);}
+.fg select option{background:var(--panel2);}
+.fg textarea{resize:vertical;min-height:65px;}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-close{position:absolute;top:18px;right:18px;width:30px;height:30px;background:var(--panel2);border:1.5px solid var(--border2);border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--tx2);transition:all .15s;}
+.modal-close:hover{color:var(--tx);border-color:var(--tx2);}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1.5px solid var(--border2);}
+
+/* ── PRIORITY BADGE ── */
+.pri-badge{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;margin-right:6px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--panel);border:1.5px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;color:var(--tx);z-index:999;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:300px;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── VIEW ── */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ── REL GRID ── */
+.rel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.rel-card{background:var(--panel);border:1.5px solid var(--border2);border-radius:10px;padding:16px;}
+.rel-disc{font-size:11px;color:var(--tx3);font-family:'JetBrains Mono',monospace;font-weight:700;margin-bottom:5px;}
+.rel-name{font-size:13px;font-weight:800;margin-bottom:10px;}
+.rel-bar{height:4px;background:var(--panel3);border-radius:2px;overflow:hidden;margin-top:10px;}
+.rel-bar-fill{height:100%;border-radius:2px;}
+.rel-meta{font-size:11px;color:var(--tx3);margin-top:5px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+
+/* ── ANIM ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.lei-card{animation:fadeIn .22s ease both;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+@media(max-width:900px){.content{padding:14px;}.tabs,.hdr{padding-left:14px;padding-right:14px;}.search-inp{width:100%;}.kpi-strip{grid-template-columns:repeat(2,1fr);}}
+
+/* ── JURISPRUDÊNCIA ── */
+.jur-card{
+  background:var(--panel);border:1.5px solid var(--border2);border-radius:12px;
+  margin-bottom:12px;overflow:hidden;transition:border-color .15s;
+}
+.jur-card:hover{border-color:var(--border);}
+.jur-card-hdr{padding:16px 20px;display:flex;gap:14px;align-items:flex-start;}
+.jur-num{
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  padding:4px 10px;border-radius:5px;border:1.5px solid;white-space:nowrap;flex-shrink:0;margin-top:1px;
+}
+.jur-num-sumula{background:var(--blue-dim);color:var(--blue);border-color:rgba(91,157,255,.35);}
+.jur-num-tema{background:var(--purple-dim,rgba(182,157,255,.1));color:var(--purple);border-color:rgba(182,157,255,.35);}
+.jur-num-oj{background:var(--gold-dim);color:var(--gold);border-color:rgba(255,201,48,.35);}
+.jur-num-re{background:var(--ora-dim);color:var(--ora);border-color:rgba(255,140,58,.35);}
+.jur-num-custom{background:var(--acc-dim);color:var(--acc);border-color:var(--acc-bd);}
+.jur-body{flex:1;min-width:0;}
+.jur-enunciado{font-size:14px;font-weight:700;color:var(--tx);line-height:1.55;margin-bottom:6px;}
+.jur-ctx{font-size:13px;color:var(--tx2);line-height:1.6;font-weight:500;}
+.jur-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.jur-tag{padding:2px 9px;border-radius:4px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;background:var(--panel3);color:var(--tx3);border:1px solid var(--border2);}
+.jur-tag.tributario{background:var(--acc-dim);color:var(--acc);border-color:var(--acc-bd);}
+.jur-tag.constitucional{background:var(--blue-dim);color:var(--blue);border-color:rgba(91,157,255,.3);}
+.jur-tag.administrativo{background:var(--purple-dim,rgba(182,157,255,.1));color:var(--purple);border-color:rgba(182,157,255,.3);}
+.jur-tag.financeiro{background:var(--gold-dim);color:var(--gold);border-color:rgba(255,201,48,.3);}
+.jur-meta{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-direction:column;align-items:flex-end;}
+.jur-tribunal{font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;}
+.jur-stf{background:rgba(255,112,112,.15);color:var(--red);}
+.jur-stj{background:rgba(91,157,255,.15);color:var(--blue);}
+.jur-tce{background:rgba(255,201,48,.15);color:var(--gold);}
+.jur-custom-t{background:var(--acc-dim);color:var(--acc);}
+.jur-imp{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.imp-max{background:var(--red-dim);color:var(--red);}
+.imp-alta{background:var(--ora-dim);color:var(--ora);}
+.imp-med{background:var(--gold-dim);color:var(--gold);}
+.jur-status{display:flex;gap:5px;margin-top:8px;}
+.jsb{padding:4px 9px;border-radius:4px;font-size:10px;font-weight:800;cursor:pointer;border:1.5px solid;transition:all .15s;font-family:'JetBrains Mono',monospace;background:none;}
+.jsb-ok{border-color:rgba(93,220,122,.2);color:rgba(93,220,122,.4);}
+.jsb-ok:hover,.jsb-ok.act{background:var(--grn-dim);color:var(--grn);border-color:rgba(93,220,122,.6);}
+.jsb-rv{border-color:rgba(255,201,48,.2);color:rgba(255,201,48,.4);}
+.jsb-rv:hover,.jsb-rv.act{background:var(--gold-dim);color:var(--gold);border-color:rgba(255,201,48,.6);}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-icon">⚖</div>
+    <div>
+      <div class="hdr-title">Controle Legislativo · SEFAZ-BA</div>
+      <div class="hdr-sub">Auditor Fiscal do Estado da Bahia</div>
+    </div>
+  </div>
+  <div class="hdr-btns">
+    <button class="btn btn-ghost btn-sm" onclick="exportarTSV()">↓ Exportar</button>
+    <button class="btn btn-danger btn-sm" onclick="confirmarReset()">↺ Reset</button>
+    <button class="btn btn-acc btn-sm" onclick="abrirModal('m-lei')">+ Nova Lei</button>
+  </div>
+</header>
+
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab active" onclick="showTab('controle',this)">📋 Controle de Leitura</button>
+  <button class="tab" onclick="showTab('prazos',this)">⏱ Prazos e Números</button>
+  <button class="tab" onclick="showTab('gabarito',this)">🎯 Gabarito de Memória</button>
+  <button class="tab" onclick="showTab('jurisprudencia',this)">⚖ Jurisprudência</button>
+  <button class="tab" onclick="showTab('relatorio',this)">📊 Relatório</button>
+</nav>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ══════ CONTROLE DE LEITURA ══════ -->
+<div class="view active" id="view-controle">
+  <div class="kpi-strip" id="kpi-leitura"></div>
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+    <input type="text" class="search-inp" id="s-ctrl" placeholder="Buscar lei, artigo, tema…" oninput="renderControle()">
+    <div class="filter-row" style="margin:0" id="disc-bar"></div>
+  </div>
+  <div class="filter-row" id="st-bar">
+    <button class="pill active" data-sf="todos"    onclick="setSF('todos',this)">Todos</button>
+    <button class="pill"        data-sf="lido"     onclick="setSF('lido',this)">✓ Lidos</button>
+    <button class="pill"        data-sf="revisao"  onclick="setSF('revisao',this)">↻ Revisão</button>
+    <button class="pill"        data-sf="dificil"  onclick="setSF('dificil',this)">⚡ Difícil</button>
+    <button class="pill"        data-sf="pendente" onclick="setSF('pendente',this)">○ Pendente</button>
+  </div>
+  <div id="leis-container"></div>
+</div>
+
+<!-- ══════ PRAZOS E NÚMEROS ══════ -->
+<div class="view" id="view-prazos">
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+    <input type="text" class="search-inp" id="s-prazos" placeholder="Buscar dispositivo, prazo, tema…" oninput="renderPrazos()">
+    <div class="filter-row" style="margin:0" id="pf-bar">
+      <button class="pill active" onclick="setPF('todos',this)">Todos</button>
+      <button class="pill" onclick="setPF('dias',this)">Dias</button>
+      <button class="pill" onclick="setPF('meses',this)">Meses</button>
+      <button class="pill" onclick="setPF('anos',this)">Anos</button>
+      <button class="pill" onclick="setPF('pct',this)">Percentuais</button>
+      <button class="pill" onclick="setPF('max',this)">Difíceis</button>
+    </div>
+    <button class="btn btn-acc btn-sm" onclick="abrirModal('m-prazo')">+ Novo Prazo</button>
+  </div>
+  <div class="prazos-wrap">
+    <table class="pt">
+      <thead>
+        <tr>
+          <th style="width:120px">DISPOSITIVO</th>
+          <th style="width:250px">TEMA / INSTITUTO</th>
+          <th style="width:130px">PRAZO / NÚMERO</th>
+          <th>CONTEXTO — CONDIÇÃO CRÍTICA</th>
+          <th style="width:80px">DIFIC.</th>
+          <th style="width:80px">FONTE</th>
+        </tr>
+      </thead>
+      <tbody id="prazos-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════ GABARITO DE MEMÓRIA ══════ -->
+<div class="view" id="view-gabarito">
+  <div class="score-bar">
+    <div>
+      <div style="font-size:11px;color:var(--tx3);letter-spacing:1px;font-family:'JetBrains Mono',monospace;font-weight:700;margin-bottom:4px;">PONTUAÇÃO DA SESSÃO</div>
+      <div class="score-info"><span id="g-ac">0</span> acertos · <span id="g-er">0</span> erros · <span id="g-pe">0</span> pendentes</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="score-big" id="g-pct">0%</div>
+      <button class="btn btn-ghost btn-sm" onclick="resetGab()">↺ Reiniciar</button>
+      <button class="btn btn-acc btn-sm" onclick="revelarTudo()">👁 Revelar tudo</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+    <input type="text" class="search-inp" id="s-gab" placeholder="Filtrar por tema ou lei…" oninput="renderGab()" style="width:240px">
+    <div class="filter-row" style="margin:0" id="gf-bar">
+      <button class="pill active" onclick="setGF('todos',this)">Todos</button>
+      <button class="pill" onclick="setGF('pendente',this)">Pendentes</button>
+      <button class="pill" onclick="setGF('errado',this)">Errados</button>
+      <button class="pill" onclick="setGF('max',this)">Difíceis</button>
+    </div>
+  </div>
+  <div class="prazos-wrap">
+    <table class="gab-table">
+      <thead>
+        <tr>
+          <th style="width:130px">DISPOSITIVO</th>
+          <th style="width:270px">COMPLETE O PRAZO / NÚMERO</th>
+          <th>CONTEXTO</th>
+          <th style="width:90px">AÇÃO</th>
+          <th style="width:80px">STATUS</th>
+        </tr>
+      </thead>
+      <tbody id="gab-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════ JURISPRUDÊNCIA ══════ -->
+<div class="view" id="view-jurisprudencia">
+  <div class="kpi-strip" id="kpi-jur"></div>
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+    <input type="text" class="search-inp" id="s-jur" placeholder="Buscar súmula, tema, enunciado…" oninput="renderJur()">
+    <div class="filter-row" style="margin:0" id="jf-bar">
+      <button class="pill active" onclick="setJF('todos',this)">Todos</button>
+      <button class="pill" onclick="setJF('STF',this)">STF</button>
+      <button class="pill" onclick="setJF('STJ',this)">STJ</button>
+      <button class="pill" onclick="setJF('TCE',this)">TCE-BA</button>
+      <button class="pill" onclick="setJF('tributario',this)">Tributário</button>
+      <button class="pill" onclick="setJF('constitucional',this)">Constitucional</button>
+      <button class="pill" onclick="setJF('administrativo',this)">Administrativo</button>
+      <button class="pill" onclick="setJF('max',this)">Importância Máxima</button>
+    </div>
+    <button class="btn btn-acc btn-sm" onclick="abrirModal('m-jur')">+ Nova Jurisprudência</button>
+  </div>
+  <div id="jur-container"></div>
+</div>
+
+<!-- ══════ RELATÓRIO ══════ -->
+<div class="view" id="view-relatorio">
+  <div class="kpi-strip" id="kpi-rel"></div>
+  <div class="sec-head"><span class="sec-tag">Artigos Estudados por Lei</span><div class="sec-line"></div></div>
+  <div class="rel-grid" id="rel-grid"></div>
+</div>
+
+</div><!-- /content -->
+
+<!-- MODAL: NOVA LEI -->
+<div class="modal-ov" id="m-lei">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('m-lei')">✕</button>
+    <div class="modal-title">+ Nova Lei</div>
+    <div class="fg-row">
+      <div class="fg"><label>Disciplina</label>
+        <select id="ml-disc">
+          <option>Tributário — Federal</option>
+          <option>Tributário — SEFAZ-BA</option>
+          <option>Constitucional</option>
+          <option>Financeiro</option>
+          <option>Administrativo</option>
+          <option>Outra</option>
+        </select>
+      </div>
+      <div class="fg"><label>ID (sigla única)</label>
+        <input type="text" id="ml-id" placeholder="ex: CTN, EC132">
+      </div>
+    </div>
+    <div class="fg"><label>Nome da Lei</label><input type="text" id="ml-nome" placeholder="ex: CTN — Código Tributário Nacional"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Número / Fonte</label><input type="text" id="ml-fonte" placeholder="ex: Lei nº 5.172/1966"></div>
+      <div class="fg"><label>Total de Artigos</label><input type="number" id="ml-total" placeholder="ex: 218" min="1"></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Cor</label>
+        <select id="ml-cor">
+          <option value="#00f0cc">Verde-ciano (1ª prioridade)</option>
+          <option value="#5b9dff">Azul</option>
+          <option value="#ffc930">Dourado</option>
+          <option value="#b69dff">Roxo</option>
+          <option value="#ff8c3a">Laranja</option>
+          <option value="#ec4899">Rosa</option>
+          <option value="#ff5f5f">Vermelho</option>
+        </select>
+      </div>
+      <div class="fg"><label>Prioridade (1–17)</label><input type="number" id="ml-pri" placeholder="ex: 1" min="1" max="99"></div>
+    </div>
+    <div class="fg"><label>Blocos — um por linha: "Arts. X–Y | Tema"</label>
+      <textarea id="ml-blocos" rows="6" placeholder="Arts. 1–50 | Fato gerador e contribuintes&#10;Arts. 51–100 | Crédito e não cumulatividade"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="fecharModal('m-lei')">Cancelar</button>
+      <button class="btn btn-acc" onclick="salvarLei()">Salvar Lei</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDITAR BLOCO -->
+<div class="modal-ov" id="m-bloco">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('m-bloco')">✕</button>
+    <div class="modal-title" id="mb-t">Editar Bloco</div>
+    <div class="fg"><label>Artigos estudados (ex: 1, 3, 5-8, 10)</label><input type="text" id="mb-arts" placeholder="1, 2, 3, 5-8, 10"></div>
+    <div class="fg"><label>Status</label>
+      <select id="mb-st">
+        <option value="">Pendente</option>
+        <option value="lido">✓ Lido</option>
+        <option value="revisao">↻ Em revisão</option>
+        <option value="dificil">⚡ Difícil</option>
+      </select>
+    </div>
+    <div class="fg"><label>Anotação / Observação</label><textarea id="mb-nota" rows="3" placeholder="Pontos de atenção, jurisprudência, conexões…"></textarea></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="fecharModal('m-bloco')">Cancelar</button>
+      <button class="btn btn-acc" onclick="salvarBloco()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVO PRAZO -->
+<div class="modal-ov" id="m-prazo">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('m-prazo')">✕</button>
+    <div class="modal-title">+ Novo Prazo / Número</div>
+    <div class="fg-row">
+      <div class="fg"><label>Lei / Fonte</label>
+        <select id="mp-lei">
+          <option>CF/88</option><option>CTN</option><option>EC 132/2023</option>
+          <option>LC 214/2025</option><option>Lei 7.014/96 (ICMS-BA)</option>
+          <option>LC 87/96</option><option>LC 123/2006</option><option>LC 105/01</option>
+          <option>LC 118/05</option><option>LRF</option><option>Lei 4.826/89</option>
+          <option>Lei 6.348/91</option><option>LC 24/75</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="fg"><label>Artigo</label><input type="text" id="mp-art" placeholder="ex: Art. 173, I"></div>
+    </div>
+    <div class="fg"><label>Tema / Instituto</label><input type="text" id="mp-tema" placeholder="ex: Decadência — regra geral"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Prazo / Número</label><input type="text" id="mp-prazo" placeholder="ex: 5 anos"></div>
+      <div class="fg"><label>Dificuldade</label>
+        <select id="mp-dif">
+          <option value="max">Máxima</option>
+          <option value="alta">Alta</option>
+          <option value="med" selected>Média</option>
+          <option value="baixa">Baixa</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Contexto — condição crítica</label><textarea id="mp-ctx" rows="3" placeholder="Circunstâncias de aplicação, exceções, súmulas…"></textarea></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="fecharModal('m-prazo')">Cancelar</button>
+      <button class="btn btn-acc" onclick="salvarPrazo()">Salvar Prazo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVA JURISPRUDÊNCIA -->
+<div class="modal-ov" id="m-jur">
+  <div class="modal" style="width:600px">
+    <button class="modal-close" onclick="fecharModal('m-jur')">✕</button>
+    <div class="modal-title">+ Nova Jurisprudência</div>
+    <div class="fg-row">
+      <div class="fg"><label>Tribunal</label>
+        <select id="mj-tribunal">
+          <option value="STF">STF</option>
+          <option value="STJ">STJ</option>
+          <option value="TCE">TCE-BA</option>
+          <option value="custom">Outro</option>
+        </select>
+      </div>
+      <div class="fg"><label>Tipo</label>
+        <select id="mj-tipo">
+          <option value="sumula">Súmula</option>
+          <option value="tema">Tema (Repercussão Geral / Recursos Repetitivos)</option>
+          <option value="oj">Orientação Jurisprudencial</option>
+          <option value="re">RE / REsp / ADI</option>
+          <option value="custom">Outra</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Número / Referência</label>
+        <input type="text" id="mj-num" placeholder="ex: Súmula 430 · Tema 69 · RE 574.706">
+      </div>
+      <div class="fg"><label>Importância para o concurso</label>
+        <select id="mj-imp">
+          <option value="max">Máxima</option>
+          <option value="alta">Alta</option>
+          <option value="med" selected>Média</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Enunciado / Ementa resumida</label>
+      <textarea id="mj-enun" rows="3" placeholder="Transcreva ou resuma o enunciado da súmula / tese fixada…"></textarea>
+    </div>
+    <div class="fg"><label>Contexto e aplicação prática</label>
+      <textarea id="mj-ctx" rows="3" placeholder="Quando se aplica, exceções, conexão com dispositivos legais, pegadinhas de prova…"></textarea>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Área temática</label>
+        <select id="mj-area">
+          <option value="tributario">Tributário</option>
+          <option value="constitucional">Constitucional</option>
+          <option value="administrativo">Administrativo</option>
+          <option value="financeiro">Financeiro</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+      <div class="fg"><label>Lei / Dispositivo relacionado</label>
+        <input type="text" id="mj-lei" placeholder="ex: Art. 135 CTN · Art. 150 CF/88">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="fecharModal('m-jur')">Cancelar</button>
+      <button class="btn btn-acc" onclick="salvarJur()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  LEIS BASE — tabela de prioridades SEFAZ-BA
+// ════════════════════════════════════════════════════════
+
+const LEIS_BASE = [
+  // ── PRIORIDADE 1 ──
+  {
+    id:'cf88trib', disc:'Tributário — Federal', pri:1, cor:'#ff5f5f',
+    nome:'CF/88 — Sistema Tributário Nacional', fonte:'Arts. 145–162 CF/88', total:18,
+    blocos:[
+      {id:'b1',range:'Arts. 145–149-A',tema:'Espécies tributárias e competências'},
+      {id:'b2',range:'Arts. 150–152',  tema:'Limitações ao poder de tributar e imunidades'},
+      {id:'b3',range:'Arts. 153–156',  tema:'Impostos da União, Estados e Municípios'},
+      {id:'b4',range:'Arts. 157–162',  tema:'Repartição das receitas tributárias'},
+    ]
+  },
+  // ── PRIORIDADE 2 ──
+  {
+    id:'ctn', disc:'Tributário — Federal', pri:2, cor:'#ff7043',
+    nome:'CTN — Código Tributário Nacional', fonte:'Lei nº 5.172/1966', total:218,
+    blocos:[
+      {id:'b1',range:'Arts. 1–18',    tema:'STN — tributo, espécies, competências'},
+      {id:'b2',range:'Arts. 19–95',   tema:'Impostos federais, estaduais e municipais'},
+      {id:'b3',range:'Arts. 96–112',  tema:'Legislação tributária — vigência, aplicação, interpretação'},
+      {id:'b4',range:'Arts. 113–138', tema:'Obrigação tributária + responsabilidade'},
+      {id:'b5',range:'Arts. 139–174', tema:'Crédito tributário — lançamento, extinção, decadência, prescrição'},
+      {id:'b6',range:'Arts. 175–193', tema:'Exclusão + garantias e privilégios do crédito'},
+      {id:'b7',range:'Arts. 194–218', tema:'Administração tributária + dívida ativa + certidões'},
+    ]
+  },
+  // ── PRIORIDADE 3 ──
+  {
+    id:'ec132', disc:'Tributário — Federal', pri:3, cor:'#ff9040',
+    nome:'EC nº 132/2023 — Reforma Tributária', fonte:'Emenda Constitucional Federal', total:54,
+    blocos:[
+      {id:'b1',range:'Arts. 1–20',tema:'CBS, IBS — competência, fato gerador, sujeição passiva'},
+      {id:'b2',range:'Arts. 21–40',tema:'Alíquotas, créditos, não cumulatividade'},
+      {id:'b3',range:'Arts. 41–54',tema:'Transição, COSB, IS, FDR, fundos'},
+    ]
+  },
+  // ── PRIORIDADE 4 ──
+  {
+    id:'lc214', disc:'Tributário — Federal', pri:4, cor:'#ffb040',
+    nome:'LC nº 214/2025 — Reforma Tributária', fonte:'Lei Complementar Federal', total:500,
+    blocos:[
+      {id:'b1',range:'Tít. I–II',  tema:'IBS e CBS — disposições gerais, regimes'},
+      {id:'b2',range:'Tít. III–IV',tema:'IS — Imposto Seletivo'},
+      {id:'b3',range:'Tít. V–VI',  tema:'COSB, fundos, transição'},
+    ]
+  },
+  // ── PRIORIDADE 5 ──
+  {
+    id:'icmsba', disc:'Tributário — SEFAZ-BA', pri:5, cor:'#ffc930',
+    nome:'Lei nº 7.014/1996 — ICMS Bahia', fonte:'Lei Estadual (BA)', total:120,
+    blocos:[
+      {id:'b1',range:'Arts. 1–20',  tema:'Hipótese de incidência, não incidência, conceitos'},
+      {id:'b2',range:'Arts. 21–47', tema:'Contribuintes, substitutos, responsáveis'},
+      {id:'b3',range:'Arts. 48–75', tema:'Base de cálculo, alíquotas, crédito do ICMS'},
+      {id:'b4',range:'Arts. 76–95', tema:'Obrigações acessórias — NF-e, EFD, SPED'},
+      {id:'b5',range:'Arts. 96–120',tema:'Fiscalização, infrações, PAF — CONSEF'},
+    ]
+  },
+  // ── PRIORIDADE 6 ──
+  {
+    id:'lc123', disc:'Tributário — Federal', pri:6, cor:'#d4e000',
+    nome:'LC nº 123/2006 — Simples Nacional', fonte:'Lei Complementar Federal', total:88,
+    blocos:[
+      {id:'b1',range:'Arts. 1–21', tema:'Âmbito, microempresa, EPP, opção'},
+      {id:'b2',range:'Arts. 22–45',tema:'Tributos abrangidos, alíquotas, Anexos I–V'},
+      {id:'b3',range:'Arts. 46–88',tema:'Exclusão, fiscalização, processo administrativo'},
+    ]
+  },
+  // ── PRIORIDADE 7 ──
+  {
+    id:'kandir', disc:'Tributário — Federal', pri:7, cor:'#7fe060',
+    nome:'LC nº 87/1996 — Lei Kandir', fonte:'Lei Complementar Federal', total:35,
+    blocos:[
+      {id:'b1',range:'Arts. 1–12', tema:'Fato gerador e base de cálculo nacional do ICMS'},
+      {id:'b2',range:'Arts. 13–25',tema:'Alíquotas, diferimento, substituição tributária'},
+      {id:'b3',range:'Arts. 26–35',tema:'Não cumulatividade, crédito, exportação'},
+    ]
+  },
+  // ── PRIORIDADE 8 ──
+  {
+    id:'lc105', disc:'Tributário — Federal', pri:8, cor:'#7fe060',
+    nome:'LC nº 105/2001 — Sigilo Bancário', fonte:'Lei Complementar Federal', total:13,
+    blocos:[
+      {id:'b1',range:'Arts. 1–6', tema:'Sigilo das instituições financeiras + quebra administrativa'},
+      {id:'b2',range:'Arts. 7–13',tema:'Deveres, infrações e responsabilidade'},
+    ]
+  },
+  // ── PRIORIDADE 9 ──
+  {
+    id:'lc118', disc:'Tributário — Federal', pri:9, cor:'#7fe060',
+    nome:'LC nº 118/2005', fonte:'Lei Complementar Federal', total:4,
+    blocos:[
+      {id:'b1',range:'Arts. 1–4',tema:'Alterações ao CTN — decadência, inscrição em dívida ativa, compensação'},
+    ]
+  },
+  // ── PRIORIDADE 10 ──
+  {
+    id:'dec7592', disc:'Tributário — SEFAZ-BA', pri:10, cor:'#5b9dff',
+    nome:'Decreto nº 7.592/1999 — Regimento CRF/SEFAZ-BA', fonte:'Decreto Estadual (BA)', total:60,
+    blocos:[
+      {id:'b1',range:'Arts. 1–30', tema:'Conselho de Recursos Fiscais — composição, competência'},
+      {id:'b2',range:'Arts. 31–60',tema:'Processo administrativo fiscal, recursos, julgamento'},
+    ]
+  },
+  // ── PRIORIDADE 11 ──
+  {
+    id:'cteba', disc:'Tributário — SEFAZ-BA', pri:11, cor:'#5b9dff',
+    nome:'Lei nº 3.956/1981 — Código Tributário do Estado da BA', fonte:'Lei Estadual (BA)', total:180,
+    blocos:[
+      {id:'b1',range:'Arts. 1–60', tema:'Disposições gerais, competência estadual, obrigação tributária'},
+      {id:'b2',range:'Arts. 61–120',tema:'Crédito tributário, lançamento, suspensão, extinção'},
+      {id:'b3',range:'Arts. 121–180',tema:'Administração tributária, dívida ativa, PAF estadual'},
+    ]
+  },
+  // ── PRIORIDADE 12 ──
+  {
+    id:'lrf', disc:'Financeiro', pri:12, cor:'#b69dff',
+    nome:'LC nº 101/2000 — LRF', fonte:'Lei Complementar Federal', total:75,
+    blocos:[
+      {id:'b1',range:'Arts. 1–15', tema:'Disposições gerais + planejamento'},
+      {id:'b2',range:'Arts. 16–28',tema:'Despesas com pessoal — limites e vedações'},
+      {id:'b3',range:'Arts. 29–42',tema:'Dívida pública + operações de crédito'},
+      {id:'b4',range:'Arts. 43–75',tema:'LDO, LOA, transparência, RGF, RREO'},
+    ]
+  },
+  // ── PRIORIDADE 13 ──
+  {
+    id:'lc116', disc:'Tributário — Federal', pri:13, cor:'#b69dff',
+    nome:'LC nº 116/2003 — ISS', fonte:'Lei Complementar Federal', total:11,
+    blocos:[
+      {id:'b1',range:'Arts. 1–5', tema:'Fato gerador, contribuinte, base de cálculo'},
+      {id:'b2',range:'Arts. 6–11',tema:'Responsabilidade, retenção, obrigações acessórias'},
+    ]
+  },
+  // ── PRIORIDADE 14 ──
+  {
+    id:'itcmdba', disc:'Tributário — SEFAZ-BA', pri:14, cor:'#b69dff',
+    nome:'Lei nº 4.826/1989 — ITCMD Bahia', fonte:'Lei Estadual (BA)', total:45,
+    blocos:[
+      {id:'b1',range:'Arts. 1–20',tema:'Fato gerador, não incidência, sujeição passiva'},
+      {id:'b2',range:'Arts. 21–45',tema:'Base de cálculo, alíquotas, lançamento, pagamento'},
+    ]
+  },
+  // ── PRIORIDADE 15 ──
+  {
+    id:'ipvaba', disc:'Tributário — SEFAZ-BA', pri:15, cor:'#b69dff',
+    nome:'Lei nº 6.348/1991 — IPVA Bahia', fonte:'Lei Estadual (BA)', total:30,
+    blocos:[
+      {id:'b1',range:'Arts. 1–15',tema:'Fato gerador, isenções, contribuintes'},
+      {id:'b2',range:'Arts. 16–30',tema:'Base de cálculo, alíquotas, lançamento'},
+    ]
+  },
+  // ── PRIORIDADE 16 ──
+  {
+    id:'lc24', disc:'Tributário — SEFAZ-BA', pri:16, cor:'#ff8c3a',
+    nome:'LC nº 24/1975 — Convênios ICMS (CONFAZ)', fonte:'Lei Complementar Federal', total:15,
+    blocos:[
+      {id:'b1',range:'Arts. 1–15',tema:'Convênios ICMS, benefícios fiscais, aprovação, ratificação'},
+    ]
+  },
+  // ── PRIORIDADE 17 ──
+  {
+    id:'ec42', disc:'Tributário — Federal', pri:17, cor:'#ff8c3a',
+    nome:'EC nº 42/2003 — Anterioridade Nonagesimal', fonte:'Emenda Constitucional Federal', total:5,
+    blocos:[
+      {id:'b1',range:'Arts. 1–5',tema:'Inserção da alínea "c" no art. 150 III CF/88 — noventena'},
+    ]
+  },
+  // ── DIR. ADMINISTRATIVO ──
+  {
+    id:'l9784', disc:'Administrativo', pri:18, cor:'#ec4899',
+    nome:'Lei nº 9.784/1999 — Processo Administrativo Federal', fonte:'Lei Federal', total:69,
+    blocos:[
+      {id:'b1',range:'Arts. 1–29', tema:'Princípios, direitos do administrado, início do processo'},
+      {id:'b2',range:'Arts. 30–49',tema:'Instrução, provas, contraditório'},
+      {id:'b3',range:'Arts. 50–69',tema:'Decisão, motivação, recursos, revisão'},
+    ]
+  },
+  {
+    id:'lei8112', disc:'Administrativo', pri:19, cor:'#ec4899',
+    nome:'Lei nº 8.112/1990 — Regime Jurídico dos Servidores', fonte:'Lei Federal', total:253,
+    blocos:[
+      {id:'b1',range:'Arts. 1–50',  tema:'Provimento, vacância, remoção, redistribuição'},
+      {id:'b2',range:'Arts. 51–107',tema:'Direitos e vantagens — vencimento, férias, licenças'},
+      {id:'b3',range:'Arts. 108–182',tema:'Regime disciplinar — deveres, proibições, penalidades, PAD'},
+      {id:'b4',range:'Arts. 183–253',tema:'Seguridade social, aposentadoria, pensão'},
+    ]
+  },
+  {
+    id:'dl200', disc:'Administrativo', pri:20, cor:'#ec4899',
+    nome:'Decreto-Lei nº 200/1967 — Organização Adm. Federal', fonte:'Decreto-Lei Federal', total:215,
+    blocos:[
+      {id:'b1',range:'Arts. 1–60', tema:'Princípios, administração direta e indireta'},
+      {id:'b2',range:'Arts. 61–130',tema:'Supervisão ministerial, delegação, controle interno'},
+      {id:'b3',range:'Arts. 131–215',tema:'Peculato, responsabilidade, disposições gerais'},
+    ]
+  },
+  // ── DIR. CONSTITUCIONAL ──
+  {
+    id:'cf88const', disc:'Constitucional', pri:21, cor:'#5b9dff',
+    nome:'CF/88 — Direitos Fundamentais e Organização do Estado', fonte:'Arts. 1–17 / 37–41 CF/88', total:60,
+    blocos:[
+      {id:'b1',range:'Arts. 1–11',  tema:'Princípios fundamentais, direitos e garantias'},
+      {id:'b2',range:'Arts. 37–41', tema:'Administração pública — princípios, cargo, concurso'},
+      {id:'b3',range:'Arts. 70–75', tema:'Fiscalização contábil, financeira — TCU'},
+    ]
+  },
+  {
+    id:'ec19', disc:'Constitucional', pri:22, cor:'#5b9dff',
+    nome:'EC nº 19/1998 — Reforma Administrativa', fonte:'Emenda Constitucional Federal', total:12,
+    blocos:[
+      {id:'b1',range:'Arts. 1–12',tema:'Eficiência, avaliação de desempenho, subsídio, teto remuneratório'},
+    ]
+  },
+];
+
+// ════════════════════════════════════════════════════════
+//  PRAZOS BASE
+// ════════════════════════════════════════════════════════
+const PRAZOS_BASE = [
+  // CTN — DECADÊNCIA E PRESCRIÇÃO
+  {id:'ctn173i',   art:'Art. 173, I',   lei:'CTN',   tema:'Decadência — regra geral',               prazo:'5 anos',    tipo:'anos', ctx:'Conta do 1º dia do exercício SEGUINTE àquele em que o lançamento PODERIA ter sido efetuado. Aplica-se a tributos lançados de ofício e a lançamento por homologação SEM pagamento antecipado.', dif:'max'},
+  {id:'ctn150p4',  art:'Art. 150, §4º', lei:'CTN',   tema:'Decadência — lançamento por homologação',prazo:'5 anos',    tipo:'anos', ctx:'Conta da DATA DO FATO GERADOR. Aplica-se SOMENTE a tributos por homologação COM pagamento antecipado. Havendo dolo, fraude ou simulação → aplica-se art. 173, I (exercício seguinte).', dif:'max'},
+  {id:'ctn174',    art:'Art. 174',       lei:'CTN',   tema:'Prescrição tributária',                  prazo:'5 anos',    tipo:'anos', ctx:'Conta da CONSTITUIÇÃO DEFINITIVA do crédito. Causas de interrupção: citação do devedor, despacho judicial que ordena citação, protesto judicial, reconhecimento de dívida pelo devedor.', dif:'max'},
+  {id:'ctn168',    art:'Art. 168',       lei:'CTN',   tema:'Prazo para repetição do indébito',       prazo:'5 anos',    tipo:'anos', ctx:'Conta: (a) da extinção do crédito, no pagamento espontâneo; (b) da reforma, anulação ou rescisão da decisão condenatória. Após LC 118/05: conta do pagamento (independentemente de homologação).', dif:'alta'},
+  {id:'ctn156',    art:'Art. 156',       lei:'CTN',   tema:'Modalidades de extinção do crédito',     prazo:'11 hip.',   tipo:'pct',  ctx:'MODERECOPA + dação: Pagamento, compensação, transação, remissão, prescrição, decadência, conversão do depósito em renda, consignação em pagamento, decisão adm. irreformável, decisão judicial, dação em pagamento de bens imóveis.', dif:'alta'},
+  {id:'ctn151',    art:'Art. 151',       lei:'CTN',   tema:'Suspensão da exigibilidade do crédito',  prazo:'6 hip.',    tipo:'pct',  ctx:'MODERECOPA: MOratória, DEpósito integral, REclamações e recursos adm., COncessão de medida liminar em MS, COncessão de tutela antecipada, PArcelamento. Suspensão NÃO dispensa obrigações acessórias.', dif:'alta'},
+  {id:'ctn135',    art:'Art. 135',       lei:'CTN',   tema:'Responsabilidade pessoal de terceiros',  prazo:'—',         tipo:'na',   ctx:'Diretores e gerentes respondem PESSOALMENTE por atos com excesso de poderes, infração de lei ou contrato. NÃO responde por mero inadimplemento (Súmula 430 STJ). Sócio-cotista sem poderes de gestão NÃO responde.', dif:'max'},
+  {id:'ctn133',    art:'Art. 133',       lei:'CTN',   tema:'Aquisição de fundo de comércio',         prazo:'—',         tipo:'na',   ctx:'INTEGRAL se alienante cessar atividade. SUBSIDIÁRIA se alienante continuar ou iniciar nova atividade em 6 meses. EXCEÇÃO: aquisição em hasta pública ou em falência/recuperação judicial — não há responsabilidade.', dif:'max'},
+  {id:'ctn142',    art:'Art. 142',       lei:'CTN',   tema:'Lançamento tributário',                  prazo:'—',         tipo:'na',   ctx:'Atividade PRIVATIVA da autoridade administrativa, VINCULADA e OBRIGATÓRIA. Reporta-se à data do FATO GERADOR (lei vigente na época). Retroatividade benigna: aplica-se lei mais benéfica para infrações (art. 106, II, c).', dif:'alta'},
+  {id:'ctn185',    art:'Art. 185',       lei:'CTN',   tema:'Fraude à execução fiscal',               prazo:'—',         tipo:'na',   ctx:'Presume-se FRAUDULENTA a alienação de bens APÓS a inscrição em dívida ativa, salvo se restarem bens suficientes para o pagamento total do débito. Marco: INSCRIÇÃO em dívida ativa (após LC 118/05).', dif:'alta'},
+  // CF/88 — PRINCÍPIOS TRIBUTÁRIOS
+  {id:'cf150iiib', art:'Art. 150, III b',lei:'CF/88',  tema:'Anterioridade geral (exercício financeiro)',prazo:'Mesmo exercício',tipo:'meses',ctx:'Vedado cobrar tributos no MESMO exercício em que publicada a lei instituidora/majoradora. EXCEÇÕES: II, IE, IPI, IOF, IEG, Empréstimo compulsório (guerra/calamidade), ICMS-combustíveis, CIDE-combustíveis.', dif:'max'},
+  {id:'cf150iiic', art:'Art. 150, III c',lei:'CF/88',  tema:'Anterioridade nonagesimal (noventena)',   prazo:'90 dias',   tipo:'dias', ctx:'Vedado cobrar tributos antes de 90 dias da publicação da lei. Combinada com anterioridade geral para ICMS, CSLL, PIS, COFINS. EXCEÇÕES (somente noventena, sem anterioridade do exercício): IR, IPTU-BC, IPVA-BC.', dif:'max'},
+  {id:'cf195p6',   art:'Art. 195, §6º',  lei:'CF/88',  tema:'Anterioridade — contribuições sociais',  prazo:'90 dias',   tipo:'dias', ctx:'Contribuições de seguridade social (CSLL, PIS, COFINS, CPRB) sujeitas APENAS à noventena de 90 dias. NÃO se submetem à anterioridade geral do exercício. Diferente do ICMS, que obedece a ambas.', dif:'alta'},
+  // LRF
+  {id:'lrf19',     art:'Art. 19',        lei:'LRF',    tema:'Limite de despesa com pessoal — Estados',prazo:'60%',       tipo:'pct',  ctx:'Estados e DF: 60% da Receita Corrente Líquida. Subdivisão: Executivo 49%, Legislativo 3%, Judiciário 6%, MP 2%. União: 50% da RCL. Municípios: 60% (Exec. 54%, Legis. 6%).', dif:'max'},
+  {id:'lrf20',     art:'Art. 20',        lei:'LRF',    tema:'Limite pessoal — Executivo estadual',    prazo:'49%',       tipo:'pct',  ctx:'Executivo estadual: 49% da RCL. Alerta em 90% do limite (44,1%). Ultrapassado o limite: vedado criar cargo, contratar hora extra, conceder vantagem, admitir pessoal, salvo reposição de vacância de cargos de provimento efetivo.', dif:'max'},
+  {id:'lrf54',     art:'Art. 54',        lei:'LRF',    tema:'RGF — Relatório de Gestão Fiscal',      prazo:'30 dias',   tipo:'dias', ctx:'Emitido ao final de cada quadrimestre (3×/ano). Publicado até 30 dias após o encerramento de cada quadrimestre. Municípios com menos de 50.000 hab. podem optar pela periodicidade semestral.', dif:'alta'},
+  {id:'lrf52',     art:'Art. 52',        lei:'LRF',    tema:'RREO — Relatório Resumido',             prazo:'30 dias',   tipo:'dias', ctx:'Bimestral. Publicado em até 30 dias após o encerramento de cada bimestre (6×/ano). Não publicado: vedadas transferências voluntárias e contratação de operações de crédito ao ente inadimplente.', dif:'alta'},
+  // ICMS-BA
+  {id:'icmsba59',  art:'Art. 59',        lei:'Lei 7.014/96',tema:'Crédito ICMS — condição de aproveitamento',prazo:'—',tipo:'na',ctx:'Direito ao crédito: entrada + saída TRIBUTADA. VEDADO quando: entrada isenta/não tributada (qualquer saída); entrada tributada + saída isenta/não tributada → DEVE ESTORNAR o crédito. EXCEÇÃO: exportações — crédito assegurado.', dif:'max'},
+  {id:'icmsba66',  art:'Art. 66',        lei:'Lei 7.014/96',tema:'CIAP — crédito do ativo imobilizado',    prazo:'1/48 mês',tipo:'meses',ctx:'Apropriação de 1/48 por mês, observada a proporção saídas tributadas / total de saídas. Alienação antes de 48 meses: crédito proporcional aos meses restantes deve ser estornado.', dif:'max'},
+  // LC 87/96
+  {id:'kd20',      art:'Art. 20',        lei:'LC 87/96',tema:'Não cumulatividade — direito ao crédito',  prazo:'—',tipo:'na',ctx:'Vedado crédito de: mercadoria para uso/consumo do estabelecimento (direito adiado para 2033 por prorrogações sucessivas); ativo permanente = regra CIAP 1/48; serviços de comunicação = específico (transporte interestadual/intermunicipal).', dif:'max'},
+  // CTN — GARANTIAS
+  {id:'ctn187',    art:'Art. 187',       lei:'CTN',   tema:'Crédito tributário na falência',          prazo:'—',tipo:'na',ctx:'Crédito tributário NÃO se sujeita ao concurso de credores nem à habilitação em falência ou arrolamento. PORÉM: créditos trabalhistas e de acidente do trabalho PREFEREM ao crédito tributário após a LC 118/05.', dif:'alta'},
+];
+
+// ════════════════════════════════════════════════════════
+//  ESTADO
+// ════════════════════════════════════════════════════════
+let ST = JSON.parse(localStorage.getItem('sefaz_v3')||'{"blocos":{},"leis_custom":[],"prazos_custom":[],"gab":{}}');
+['blocos','leis_custom','prazos_custom','gab','jur_custom'].forEach(k=>{if(!ST[k])ST[k]=k==='blocos'||k==='gab'?{}:[];});
+if(!ST.jur_st) ST.jur_st = {};
+
+let LEIS_ALL = [...LEIS_BASE, ...ST.leis_custom];
+let PRAZOS_ALL = [...PRAZOS_BASE, ...ST.prazos_custom];
+
+const openLeis = new Set();
+let filtDisc = 'todas';
+let filtSF = 'todos';
+let filtPF = 'todos';
+let filtGF = 'todos';
+let _eL = null, _eB = null;
+
+function save(){ localStorage.setItem('sefaz_v3', JSON.stringify(ST)); }
+function bk(l,b){ return l+'::'+b; }
+function getBST(l,b){ return ST.blocos[bk(l,b)]||{arts:[],status:'',nota:''}; }
+
+// ═══ INIT ════
+function init(){
+  renderDiscBar();
+  renderKPI();
+  renderControle();
+  renderPrazos();
+  renderGab();
+  renderJur();
+}
+
+// ═══ TABS ════
+function showTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(id==='relatorio') renderRelatorio();
+}
+
+// ═══ KPI ════
+function calcStats(){
+  let tb=0,bd=0,arts=0,rev=0,dif=0;
+  LEIS_ALL.forEach(l=>l.blocos.forEach(b=>{
+    tb++; const s=getBST(l.id,b.id);
+    if(s.status==='lido')    bd++;
+    if(s.status==='revisao') rev++;
+    if(s.status==='dificil') dif++;
+    arts+=s.arts.length;
+  }));
+  return{tb,bd,arts,rev,dif,pct:tb>0?Math.round(bd/tb*100):0};
+}
+function renderKPI(){
+  const s=calcStats();
+  document.getElementById('kpi-leitura').innerHTML=`
+    <div class="kpi"><div class="kpi-bar" style="background:var(--acc)"></div>
+      <div class="kpi-lbl">Progresso Geral</div><div class="kpi-val">${s.pct}%</div><div class="kpi-sub">${s.bd}/${s.tb} blocos</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div>
+      <div class="kpi-lbl">Artigos Estudados</div><div class="kpi-val">${s.arts}</div><div class="kpi-sub">registrados</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--gold)"></div>
+      <div class="kpi-lbl">Em Revisão</div><div class="kpi-val">${s.rev}</div><div class="kpi-sub">blocos</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div>
+      <div class="kpi-lbl">Difíceis</div><div class="kpi-val">${s.dif}</div><div class="kpi-sub">sinalizados</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--purple)"></div>
+      <div class="kpi-lbl">Leis no Plano</div><div class="kpi-val">${LEIS_ALL.length}</div><div class="kpi-sub">legislações</div></div>`;
+}
+
+// ═══ DISC BAR ════
+function renderDiscBar(){
+  const discs=['todas',...new Set(LEIS_ALL.map(l=>l.disc))];
+  document.getElementById('disc-bar').innerHTML=discs.map(d=>
+    `<button class="pill ${filtDisc===d?'active':''}" onclick="setDisc('${esc(d)}',this)">${d==='todas'?'Todas':d}</button>`
+  ).join('');
+}
+function setDisc(d,el){
+  filtDisc=d;
+  document.querySelectorAll('#disc-bar .pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); renderControle();
+}
+function setSF(f,el){
+  filtSF=f;
+  document.querySelectorAll('#st-bar .pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); renderControle();
+}
+
+// ═══ CONTROLE ════
+function renderControle(){
+  renderKPI();
+  const q=(document.getElementById('s-ctrl')?.value||'').toLowerCase();
+  let leis=LEIS_ALL.filter(l=>{
+    if(filtDisc!=='todas'&&l.disc!==filtDisc) return false;
+    if(q){
+      const nm=l.nome.toLowerCase().includes(q)||l.fonte.toLowerCase().includes(q)||l.disc.toLowerCase().includes(q);
+      const bm=l.blocos.some(b=>b.tema.toLowerCase().includes(q)||b.range.toLowerCase().includes(q)||getBST(l.id,b.id).arts.some(a=>a.toLowerCase().includes(q)));
+      if(!nm&&!bm) return false;
+    }
+    if(filtSF!=='todos'){
+      const ok=l.blocos.some(b=>{const s=getBST(l.id,b.id).status; return filtSF==='pendente'?!s:s===filtSF;});
+      if(!ok) return false;
+    }
+    return true;
+  });
+  leis.sort((a,b)=>(a.pri||99)-(b.pri||99));
+  const c=document.getElementById('leis-container');
+  if(!leis.length){c.innerHTML='<div style="text-align:center;padding:50px;color:var(--tx3);font-size:14px">Nenhuma lei encontrada.</div>';return;}
+  if(filtDisc==='todas'){
+    const g={};
+    leis.forEach(l=>{if(!g[l.disc])g[l.disc]=[];g[l.disc].push(l);});
+    c.innerHTML=Object.entries(g).map(([disc,ls])=>
+      `<div class="sec-head"><span class="sec-tag">${disc}</span><div class="sec-line"></div></div>${ls.map((l,i)=>renderLeiCard(l,i)).join('')}`
+    ).join('');
+  } else {
+    c.innerHTML=leis.map((l,i)=>renderLeiCard(l,i)).join('');
+  }
+  // bind enter
+  c.querySelectorAll('.art-inp').forEach(inp=>{
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter')addArt(this.dataset.lei,this.dataset.bloco,this);});
+  });
+}
+
+function renderLeiCard(l,idx){
+  const done=l.blocos.filter(b=>getBST(l.id,b.id).status==='lido').length;
+  const pct=Math.round(done/l.blocos.length*100);
+  const isOpen=openLeis.has(l.id);
+  // prioridade dot
+  const priColor = l.pri<=4?'var(--red)':l.pri<=9?'var(--ora)':l.pri<=15?'var(--gold)':'var(--grn)';
+  const rows=l.blocos.map(b=>{
+    const st=getBST(l.id,b.id);
+    const chips=st.arts.map(a=>`<span class="chip ${st.status}">${a}<button class="chip-rm" onclick="rmArt('${esc(l.id)}','${esc(b.id)}','${esc(a)}')">✕</button></span>`).join('');
+    const stL=st.status==='lido'?'<span style="color:var(--grn);font-size:11px;font-weight:700">✓ Lido</span>':st.status==='revisao'?'<span style="color:var(--gold);font-size:11px;font-weight:700">↻ Revisão</span>':st.status==='dificil'?'<span style="color:var(--red);font-size:11px;font-weight:700">⚡ Difícil</span>':'';
+    return `<tr>
+      <td style="width:130px"><div class="art-range" style="color:${l.cor}">${b.range}</div></td>
+      <td style="width:260px">
+        <div class="art-tema">${b.tema}</div>
+        ${st.nota?`<div class="art-nota-txt">📌 ${st.nota}</div>`:''}
+      </td>
+      <td>
+        <div class="chips-wrap" id="chips-${l.id}-${b.id}">
+          ${chips||'<span style="font-size:12px;color:var(--tx3);font-style:italic">nenhum artigo registrado</span>'}
+        </div>
+        <div class="art-inp-row">
+          <input class="art-inp" type="text" placeholder="ex: 1, 3, 5-8, 10…"
+            data-lei="${l.id}" data-bloco="${b.id}" id="inp-${l.id}-${b.id}">
+          <button class="add-btn" onclick="addArtBtn('${esc(l.id)}','${esc(b.id)}')">+ Add</button>
+        </div>
+      </td>
+      <td style="width:130px">
+        <div class="st-row">
+          <button class="sb sb-ok ${st.status==='lido'?'act':''}"    onclick="toggleST('${esc(l.id)}','${esc(b.id)}','lido')"    title="Lido">✓</button>
+          <button class="sb sb-rv ${st.status==='revisao'?'act':''}" onclick="toggleST('${esc(l.id)}','${esc(b.id)}','revisao')" title="Revisão">↻</button>
+          <button class="sb sb-df ${st.status==='dificil'?'act':''}" onclick="toggleST('${esc(l.id)}','${esc(b.id)}','dificil')" title="Difícil">⚡</button>
+        </div>
+        <div class="st-lbl">${stL}</div>
+      </td>
+      <td style="width:80px">
+        <button class="btn btn-ghost btn-sm" onclick="abrirBloco('${esc(l.id)}','${esc(b.id)}','${esc(b.range)}','${esc(b.tema)}')" style="font-size:11px;padding:5px 9px">✏ Editar</button>
+      </td>
+    </tr>`;
+  }).join('');
+  return `<div class="lei-card" style="animation-delay:${idx*.04}s">
+    <div class="lei-card-hdr" onclick="toggleLei('${l.id}')">
+      <div style="width:4px;height:38px;border-radius:2px;background:${l.cor};flex-shrink:0;"></div>
+      <span class="pri-badge" style="background:${priColor};width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0;" title="Prioridade ${l.pri||'?'}ª"></span>
+      <div class="lei-info">
+        <div class="lei-nome">${l.pri?`<span style="font-size:11px;color:var(--tx3);font-family:'JetBrains Mono',monospace">${l.pri}ª · </span>`:''} ${l.nome}</div>
+        <div class="lei-sub">${l.fonte}</div>
+      </div>
+      <div class="lei-prog-wrap">
+        <div class="lei-prog-bar"><div class="lei-prog-fill" style="width:${pct}%;background:${l.cor}"></div></div>
+        <div class="lei-pct" style="color:${l.cor}">${pct}%</div>
+      </div>
+      <span class="lei-chev ${isOpen?'open':''}" id="chev-${l.id}">▼</span>
+    </div>
+    <div class="lei-body ${isOpen?'open':''}" id="body-${l.id}">
+      <table class="at">
+        <thead><tr>
+          <th>BLOCO</th><th>TEMA</th><th>ARTIGOS ESTUDADOS</th><th style="width:130px">STATUS</th><th style="width:80px">AÇÃO</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function toggleLei(id){
+  const body=document.getElementById('body-'+id);
+  const chev=document.getElementById('chev-'+id);
+  if(!body)return;
+  if(openLeis.has(id)){openLeis.delete(id);body.classList.remove('open');chev.classList.remove('open');}
+  else{openLeis.add(id);body.classList.add('open');chev.classList.add('open');}
+}
+
+// ═══ ARTIGOS ════
+function parseArts(str){
+  return str.split(/[,;\s]+/).map(s=>s.replace(/^art\.?\s*/i,'').trim()).filter(s=>s.length>0).map(s=>'Art.'+s);
+}
+function addArt(leiId,blocoId,inp){
+  const val=inp.value.trim(); if(!val)return;
+  const novas=parseArts(val);
+  const k=bk(leiId,blocoId);
+  if(!ST.blocos[k])ST.blocos[k]={arts:[],status:'',nota:''};
+  let add=0; novas.forEach(a=>{if(!ST.blocos[k].arts.includes(a)){ST.blocos[k].arts.push(a);add++;}});
+  inp.value=''; save(); openLeis.add(leiId); renderControle();
+  showToast(add>0?`✓ ${add} artigo(s) adicionado(s)`:'⚠ Já registrado(s)');
+}
+function addArtBtn(l,b){const inp=document.getElementById(`inp-${l}-${b}`);if(inp)addArt(l,b,inp);}
+function rmArt(l,b,art){
+  const k=bk(l,b); if(!ST.blocos[k])return;
+  ST.blocos[k].arts=ST.blocos[k].arts.filter(a=>a!==art);
+  save(); openLeis.add(l); renderControle();
+}
+function toggleST(l,b,ns){
+  const k=bk(l,b); if(!ST.blocos[k])ST.blocos[k]={arts:[],status:'',nota:''};
+  ST.blocos[k].status=ST.blocos[k].status===ns?'':ns;
+  save(); openLeis.add(l); renderControle();
+  const lbl={lido:'✓ Lido',revisao:'↻ Revisão',dificil:'⚡ Difícil','':'Pendente'};
+  showToast('Status: '+lbl[ST.blocos[k].status]);
+}
+
+// ═══ BLOCO MODAL ════
+function abrirBloco(l,b,range,tema){
+  _eL=l;_eB=b;
+  const st=getBST(l,b);
+  document.getElementById('mb-t').textContent=range+' — '+tema;
+  document.getElementById('mb-arts').value=st.arts.map(a=>a.replace('Art.','')).join(', ');
+  document.getElementById('mb-st').value=st.status||'';
+  document.getElementById('mb-nota').value=st.nota||'';
+  abrirModal('m-bloco');
+}
+function salvarBloco(){
+  if(!_eL||!_eB)return;
+  const k=bk(_eL,_eB); if(!ST.blocos[k])ST.blocos[k]={arts:[],status:'',nota:''};
+  const raw=document.getElementById('mb-arts').value.trim();
+  ST.blocos[k].arts=raw?parseArts(raw):[];
+  ST.blocos[k].status=document.getElementById('mb-st').value;
+  ST.blocos[k].nota=document.getElementById('mb-nota').value.trim();
+  save(); fecharModal('m-bloco'); openLeis.add(_eL); renderControle();
+  showToast('✓ Bloco atualizado');
+}
+
+// ═══ LEI MODAL ════
+function salvarLei(){
+  const disc=document.getElementById('ml-disc').value;
+  const id=document.getElementById('ml-id').value.trim().toLowerCase().replace(/\s+/g,'_');
+  const nome=document.getElementById('ml-nome').value.trim();
+  const fonte=document.getElementById('ml-fonte').value.trim();
+  const total=parseInt(document.getElementById('ml-total').value)||0;
+  const cor=document.getElementById('ml-cor').value;
+  const pri=parseInt(document.getElementById('ml-pri').value)||99;
+  const bRaw=document.getElementById('ml-blocos').value.trim();
+  if(!id||!nome){showToast('⚠ Preencha ID e Nome');return;}
+  if(LEIS_ALL.find(l=>l.id===id)){showToast('⚠ ID já existe');return;}
+  const blocos=bRaw?bRaw.split('\n').filter(l=>l.trim()).map((l,i)=>{
+    const p=l.split('|'); return{id:'b'+(i+1),range:(p[0]||'').trim(),tema:(p[1]||'').trim()};
+  }):[{id:'b1',range:'Todos os artigos',tema:nome}];
+  ST.leis_custom.push({id,disc,nome,fonte,cor,total,pri,blocos});
+  LEIS_ALL=[...LEIS_BASE,...ST.leis_custom];
+  save(); fecharModal('m-lei'); renderDiscBar(); renderControle();
+  showToast('✓ Lei adicionada: '+nome);
+  ['ml-id','ml-nome','ml-fonte','ml-total','ml-blocos'].forEach(x=>document.getElementById(x).value='');
+}
+
+// ═══ PRAZOS ════
+function setPF(f,el){
+  filtPF=f;
+  document.querySelectorAll('#pf-bar .pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); renderPrazos();
+}
+function getPrazosFilt(){
+  const q=(document.getElementById('s-prazos')?.value||'').toLowerCase();
+  return PRAZOS_ALL.filter(p=>{
+    const mf=filtPF==='todos'||p.tipo===filtPF||(filtPF==='max'&&p.dif==='max');
+    const mq=!q||p.art.toLowerCase().includes(q)||p.tema.toLowerCase().includes(q)||p.ctx.toLowerCase().includes(q)||p.lei.toLowerCase().includes(q)||p.prazo.toLowerCase().includes(q);
+    return mf&&mq;
+  });
+}
+function renderPrazos(){
+  const rows=getPrazosFilt().map(p=>{
+    const tc=p.tipo==='dias'?'ptag-d':p.tipo==='anos'?'ptag-a':p.tipo==='meses'?'ptag-m':p.tipo==='pct'?'ptag-p':'ptag-n';
+    const dc=p.dif==='max'?'d-max':p.dif==='alta'?'d-alta':p.dif==='med'?'d-med':'d-baixa';
+    return `<tr>
+      <td><div class="pt-art">${p.art}</div><div style="font-size:11px;color:var(--tx3);margin-top:2px;font-family:'JetBrains Mono',monospace;font-weight:600">${p.lei}</div></td>
+      <td><div class="pt-tema">${p.tema}</div></td>
+      <td><span class="ptag ${tc}">${p.prazo}</span></td>
+      <td><div class="pt-ctx">${p.ctx}</div></td>
+      <td><span class="diff ${dc}">${p.dif.toUpperCase()}</span></td>
+      <td style="font-size:11px;color:var(--tx3);font-family:'JetBrains Mono',monospace;font-weight:600">${p.lei}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('prazos-tbody').innerHTML=rows||`<tr><td colspan="6" style="text-align:center;color:var(--tx3);padding:28px;font-size:13px">Nenhum resultado.</td></tr>`;
+}
+function salvarPrazo(){
+  const lei=document.getElementById('mp-lei').value;
+  const art=document.getElementById('mp-art').value.trim();
+  const tema=document.getElementById('mp-tema').value.trim();
+  const prazo=document.getElementById('mp-prazo').value.trim();
+  const dif=document.getElementById('mp-dif').value;
+  const ctx=document.getElementById('mp-ctx').value.trim();
+  if(!art||!tema||!prazo){showToast('⚠ Preencha artigo, tema e prazo');return;}
+  const tipo=prazo.toLowerCase().includes('dia')?'dias':prazo.toLowerCase().includes('ano')?'anos':prazo.toLowerCase().includes('m')?'meses':prazo.includes('%')?'pct':'na';
+  const entry={id:'cp_'+Date.now(),art,lei,tema,prazo,tipo,ctx,dif};
+  ST.prazos_custom.push(entry);
+  PRAZOS_ALL=[...PRAZOS_BASE,...ST.prazos_custom];
+  save(); fecharModal('m-prazo'); renderPrazos(); renderGab();
+  showToast('✓ Prazo adicionado: '+art);
+  ['mp-art','mp-tema','mp-prazo','mp-ctx'].forEach(x=>document.getElementById(x).value='');
+}
+
+// ═══ GABARITO ════
+function setGF(f,el){
+  filtGF=f;
+  document.querySelectorAll('#gf-bar .pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); renderGab();
+}
+function renderGab(){
+  const q=(document.getElementById('s-gab')?.value||'').toLowerCase();
+  let items=PRAZOS_ALL.filter(p=>p.tipo!=='na');
+  if(filtGF==='max')     items=items.filter(p=>p.dif==='max');
+  else if(filtGF==='pendente') items=items.filter(p=>!ST.gab[p.id]);
+  else if(filtGF==='errado')   items=items.filter(p=>ST.gab[p.id]==='wrong');
+  if(q) items=items.filter(p=>p.art.toLowerCase().includes(q)||p.tema.toLowerCase().includes(q)||p.lei.toLowerCase().includes(q));
+
+  let ac=0,er=0,pe=0;
+  PRAZOS_ALL.filter(p=>p.tipo!=='na').forEach(p=>{
+    const r=ST.gab[p.id];
+    if(r==='correct')ac++; else if(r==='wrong')er++; else pe++;
+  });
+  const tot=ac+er; const pct=tot>0?Math.round(ac/tot*100):0;
+  document.getElementById('g-ac').textContent=ac;
+  document.getElementById('g-er').textContent=er;
+  document.getElementById('g-pe').textContent=pe;
+  document.getElementById('g-pct').textContent=pct+'%';
+
+  const tbody=document.getElementById('gab-tbody');
+  tbody.innerHTML=items.map(p=>{
+    const resp=ST.gab[p.id]||'';
+    const ic=resp==='correct'?'ok':resp==='wrong'?'err':resp==='revealed'?'rev':'';
+    const dc=p.dif==='max'?'d-max':p.dif==='alta'?'d-alta':p.dif==='med'?'d-med':'d-baixa';
+    const val=resp==='revealed'?p.prazo:'';
+    const ro=resp==='correct'||resp==='revealed'?'readonly':'';
+    return `<tr id="gr-${p.id}">
+      <td>
+        <div class="pt-art">${p.art}</div>
+        <div style="font-size:11px;color:var(--tx3);font-family:'JetBrains Mono',monospace;font-weight:600;margin-top:2px">${p.lei}</div>
+      </td>
+      <td>
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:7px;font-weight:600">${p.tema}</div>
+        <input class="fill-inp ${ic}" id="gi-${p.id}" type="text"
+          placeholder="Digite o prazo / número…" value="${val}" ${ro}
+          onkeydown="if(event.key==='Enter')checkGab('${p.id}','${esc(p.prazo)}')">
+      </td>
+      <td><div style="font-size:12px;color:var(--tx2);line-height:1.6;font-weight:500">${p.ctx.slice(0,130)}${p.ctx.length>130?'…':''}</div></td>
+      <td>
+        <button class="gab-check" onclick="checkGab('${p.id}','${esc(p.prazo)}')">✓ Verificar</button>
+        <button class="gab-ver"   onclick="revealGab('${p.id}','${esc(p.prazo)}')">👁 Ver</button>
+      </td>
+      <td>
+        <span class="diff ${dc}">${p.dif.toUpperCase()}</span>
+        ${resp==='correct'?'<div style="font-size:11px;color:var(--grn);margin-top:5px;font-weight:700">✓ Acerto</div>':resp==='wrong'?'<div style="font-size:11px;color:var(--red);margin-top:5px;font-weight:700">✗ Errado</div>':resp==='revealed'?'<div style="font-size:11px;color:var(--gold);margin-top:5px;font-weight:700">👁 Revelado</div>':''}
+      </td>
+    </tr>`;
+  }).join('');
+  if(!items.length) tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--tx3);padding:28px;font-size:13px">Nenhum item para este filtro.</td></tr>`;
+}
+function checkGab(id,gab){
+  const inp=document.getElementById('gi-'+id); if(!inp)return;
+  const val=inp.value.trim().toLowerCase();
+  const g=gab.toLowerCase();
+  const ok=val===g||g.includes(val)||(val.length>1&&val.includes(g.split(' ')[0]));
+  ST.gab[id]=ok?'correct':'wrong';
+  inp.classList.remove('ok','err','rev'); inp.classList.add(ok?'ok':'err');
+  if(ok)inp.readOnly=true;
+  save(); renderGab();
+  showToast(ok?'✓ Correto! '+gab:'✗ Gabarito: '+gab);
+}
+function revealGab(id,gab){
+  const inp=document.getElementById('gi-'+id); if(!inp)return;
+  inp.value=gab; inp.classList.remove('ok','err'); inp.classList.add('rev'); inp.readOnly=true;
+  ST.gab[id]='revealed'; save(); renderGab();
+}
+function revelarTudo(){
+  PRAZOS_ALL.filter(p=>p.tipo!=='na').forEach(p=>{if(!ST.gab[p.id])ST.gab[p.id]='revealed';});
+  save(); renderGab();
+}
+function resetGab(){
+  ST.gab={}; save(); renderGab(); showToast('↺ Gabarito reiniciado');
+}
+
+// ═══ RELATORIO ════
+function renderRelatorio(){
+  const s=calcStats();
+  document.getElementById('kpi-rel').innerHTML=`
+    <div class="kpi"><div class="kpi-bar" style="background:var(--acc)"></div>
+      <div class="kpi-lbl">Artigos Registrados</div><div class="kpi-val">${s.arts}</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div>
+      <div class="kpi-lbl">Blocos Concluídos</div><div class="kpi-val">${s.bd}/${s.tb}</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--gold)"></div>
+      <div class="kpi-lbl">Progresso</div><div class="kpi-val">${s.pct}%</div></div>`;
+  const g=document.getElementById('rel-grid');
+  g.innerHTML=LEIS_ALL.sort((a,b)=>(a.pri||99)-(b.pri||99)).map(l=>{
+    let artsAll=[],lidos=0,rev=0,dif=0;
+    l.blocos.forEach(b=>{const st=getBST(l.id,b.id);artsAll=artsAll.concat(st.arts);if(st.status==='lido')lidos++;if(st.status==='revisao')rev++;if(st.status==='dificil')dif++;});
+    const pct=Math.round(lidos/l.blocos.length*100);
+    const chips=artsAll.length?artsAll.map(a=>`<span class="chip">${a}</span>`).join(''):'<span style="font-size:12px;color:var(--tx3);font-style:italic">Nenhum artigo registrado</span>';
+    return `<div class="rel-card">
+      <div class="rel-disc">${l.disc}</div>
+      <div class="rel-name" style="color:${l.cor}">${l.pri?l.pri+'ª · ':''} ${l.nome}</div>
+      <div class="chips-wrap">${chips}</div>
+      <div class="rel-bar"><div class="rel-bar-fill" style="width:${pct}%;background:${l.cor}"></div></div>
+      <div class="rel-meta">${lidos}/${l.blocos.length} blocos · ${artsAll.length} arts${rev?' · '+rev+' rev':''}${dif?' · '+dif+' dif':''} · ${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ MODAIS ════
+function abrirModal(id){document.getElementById(id).classList.add('open');}
+function fecharModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-ov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+// ═══ RESET / EXPORT ════
+function confirmarReset(){
+  if(!confirm('Resetar TODO o progresso? Esta ação não pode ser desfeita.'))return;
+  ST={blocos:{},leis_custom:[],prazos_custom:[],gab:{},jur_custom:[],jur_st:{}};
+  LEIS_ALL=[...LEIS_BASE]; PRAZOS_ALL=[...PRAZOS_BASE];
+  save(); renderDiscBar(); renderControle(); renderPrazos(); renderGab(); renderJur();
+  showToast('↺ Progresso resetado');
+}
+function exportarTSV(){
+  const linhas=['LEI\tDISCIPLINA\tPRIORIDADE\tBLOCO\tTEMA\tSTATUS\tARTIGOS\tNOTA'];
+  LEIS_ALL.sort((a,b)=>(a.pri||99)-(b.pri||99)).forEach(l=>l.blocos.forEach(b=>{
+    const s=getBST(l.id,b.id);
+    linhas.push([l.nome,l.disc,l.pri||'',b.range,b.tema,s.status||'pendente',s.arts.join('; '),s.nota||''].join('\t'));
+  }));
+  const blob=new Blob([linhas.join('\n')],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url;a.download='sefaz_ba_legislacao.tsv';a.click();URL.revokeObjectURL(url);
+  showToast('✓ Exportado (.tsv — Excel/Sheets)');
+}
+
+// ═══ UTILS ════
+function esc(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ════════════════════════════════════════════════════════
+//  JURISPRUDÊNCIA BASE
+// ════════════════════════════════════════════════════════
+
+const JUR_BASE = [
+  // ── STF — TRIBUTÁRIO ──
+  {id:'stf_s730',  tribunal:'STF', tipo:'sumula', num:'Súmula 730',    imp:'max', area:'tributario',      lei:'Art. 155, §2º CF/88',  enun:'A imunidade tributária conferida a instituições de assistência social sem fins lucrativos somente alcança as entidades fechadas de previdência social privada se não houver contribuição dos beneficiários.', ctx:'Distingue imunidade das entidades abertas das fechadas de previdência. Beneficiário que contribui → não há imunidade para a entidade.'},
+  {id:'stf_s585',  tribunal:'STF', tipo:'sumula', num:'Súmula 585',    imp:'alta', area:'tributario',     lei:'Art. 150, VI, d CF/88', enun:'É inconstitucional a taxa municipal de conservação de estradas de rodagem cuja base de cálculo seja idêntica à do ITR.', ctx:'Vedação de identidade de base de cálculo entre taxa e imposto — princípio do art. 145, §2º CF/88.'},
+  {id:'stf_t69',   tribunal:'STF', tipo:'tema',   num:'Tema 69 (RG)',  imp:'max', area:'tributario',      lei:'Art. 155, §2º, X, a CF/88', enun:'O ICMS não compõe a base de cálculo para a incidência do PIS e da COFINS (RE 574.706 — Tese do Século).', ctx:'ICMS é apenas ingresso transitório no caixa do contribuinte (mero trânsito contábil), não constituindo faturamento ou receita. Modulação dos efeitos: créditos só a partir de 15/03/2017, salvo ações ajuizadas antes. Impacto trilionário para o fisco federal.'},
+  {id:'stf_t490',  tribunal:'STF', tipo:'tema',   num:'Tema 490 (RG)', imp:'max', area:'tributario',      lei:'Art. 150, I CF/88',    enun:'É devida a restituição da diferença do ICMS pago a mais, no regime de substituição tributária para frente, se a base de cálculo efetiva da operação for inferior à presumida.', ctx:'Superou a Súmula 7 do STF (que dizia ser irrelevante a diferença). Contribuinte tem direito à restituição quando o fato gerador presumido ocorrer com valor menor ou não ocorrer. Declaração de inconstitucionalidade parcial do art. 10 da LC 87/96.'},
+  {id:'stf_s_112', tribunal:'STF', tipo:'sumula', num:'Súmula Vinc. 31',imp:'max', area:'tributario',     lei:'Art. 156, III CF/88',  enun:'É inconstitucional a incidência do Imposto sobre Serviços de Qualquer Natureza — ISS sobre operações de locação de bens móveis.', ctx:'Locação de bem móvel não é prestação de serviço (obrigação de dar, não de fazer). Diferente do leasing — Súmula 138 STJ reconhece incidência do ISS no arrendamento mercantil.'},
+  {id:'stf_t796',  tribunal:'STF', tipo:'tema',   num:'Tema 796 (RG)', imp:'alta', area:'tributario',     lei:'Art. 155, §2º, XII, g CF/88', enun:'Os benefícios fiscais de ICMS concedidos sem convênio do CONFAZ são inconstitucionais, configurando guerra fiscal vedada.', ctx:'Art. 155, §2º, XII, g CF/88 c/c LC 24/75. Exige aprovação unânime dos Estados em convênio. Exceção: diferimento para o ativo permanente do estabelecimento em relação às contribuições ao FEP.'},
+  {id:'stf_adi5866',tribunal:'STF', tipo:'re',    num:'ADI 5.866',     imp:'alta', area:'tributario',     lei:'Art. 150, II CF/88',   enun:'A substituição tributária progressiva do ICMS com base em MVA (margem de valor agregado) pauta-tarifária é constitucional, mesmo que presumida de forma abstrata.', ctx:'Desde que a MVA seja razoável e baseada em critérios objetivos. Reforça a constitucionalidade do regime de ST progressiva previsto na LC 87/96.'},
+  // ── STJ — TRIBUTÁRIO ──
+  {id:'stj_s430',  tribunal:'STJ', tipo:'sumula', num:'Súmula 430',    imp:'max', area:'tributario',      lei:'Art. 135 CTN',         enun:'O inadimplemento da obrigação tributária pela sociedade não gera, por si só, a responsabilidade solidária do sócio-gerente.', ctx:'Mero inadimplemento ≠ responsabilidade do sócio. Exige-se prova de ato com excesso de poderes, infração de lei, contrato social ou estatutos. ATENÇÃO: dissolution irregular da sociedade → presunção de dissolução irregular → responsabilidade (Súmula 435 STJ).'},
+  {id:'stj_s435',  tribunal:'STJ', tipo:'sumula', num:'Súmula 435',    imp:'max', area:'tributario',      lei:'Art. 135, III CTN',    enun:'Presume-se dissolvida irregularmente a empresa que deixar de funcionar no seu domicílio fiscal, sem comunicação aos órgãos competentes, legitimando o redirecionamento da execução fiscal para o sócio-gerente.', ctx:'Complementa a Súmula 430: dissolução irregular → responsabilidade pessoal. A Fazenda não precisa provar infração específica, basta demonstrar a irregularidade na dissolução.'},
+  {id:'stj_s555',  tribunal:'STJ', tipo:'sumula', num:'Súmula 555',    imp:'max', area:'tributario',      lei:'Art. 150, §4º CTN',    enun:'Quando não houver declaração do débito, o prazo decadencial quinquenal para o Fisco constituir o crédito tributário conta-se exclusivamente na forma do art. 173, I CTN, nos casos em que a legislação atribui ao sujeito passivo o dever de antecipar o pagamento sem prévio exame da autoridade administrativa.', ctx:'Resolução do conflito entre art. 150, §4º e art. 173, I CTN: SEM pagamento antecipado → aplica-se art. 173, I (exercício seguinte). COM pagamento antecipado → aplica-se art. 150, §4º (data do FG). Crítico para prova.'},
+  {id:'stj_s622',  tribunal:'STJ', tipo:'sumula', num:'Súmula 622',    imp:'alta', area:'tributario',     lei:'Art. 174 CTN',         enun:'A notificação do protesto cautelar é causa interruptiva da prescrição, ainda que o contribuinte não tenha sido citado.', ctx:'Amplia as causas de interrupção da prescrição além do rol do art. 174, parágrafo único do CTN. O STJ tem admitido interpretação extensiva das causas interruptivas.'},
+  {id:'stj_t98',   tribunal:'STJ', tipo:'tema',   num:'Tema 98 (Rep.)',imp:'max', area:'tributario',      lei:'Art. 168 CTN',         enun:'A ação de repetição de indébito tributário relativamente a tributos sujeitos a lançamento por homologação extingue-se no prazo de 5 anos, contados da data do pagamento antecipado, após a LC 118/05.', ctx:'Antes da LC 118/05: tese dos "5+5" (5 anos para homologação tácita + 5 para prescrição). Após LC 118/05: apenas 5 anos do pagamento. Modulação de efeitos: para fatos geradores anteriores a 09/06/2005 aplica-se o prazo anterior.'},
+  // ── STJ — ADMINISTRATIVO ──
+  {id:'stj_s621',  tribunal:'STJ', tipo:'sumula', num:'Súmula 621',    imp:'alta', area:'administrativo', lei:'Art. 37 CF/88',        enun:'Os efeitos da condenação imposta ao servidor nas ações de improbidade administrativa são de natureza civil e política, podendo a sentença determinar a perda do cargo.', ctx:'Improbidade administrativa: natureza civil, mas com repercussão funcional. Após a Lei 14.230/21: dolo específico passa a ser requisito para configuração da improbidade — mudança importante.'},
+  {id:'stf_t21',   tribunal:'STF', tipo:'tema',   num:'Tema 21 (RG)',  imp:'alta', area:'administrativo', lei:'Art. 37, §6º CF/88',   enun:'O Estado responde objetivamente pelos atos dos notários e registradores que, no exercício de suas funções, causem dano a terceiros.', ctx:'Responsabilidade objetiva do Estado extensível aos serviços delegados (art. 37, §6º CF/88). Ação de regresso contra o agente público exige prova de dolo ou culpa.'},
+  // ── STF — CONSTITUCIONAL ──
+  {id:'stf_sv13',  tribunal:'STF', tipo:'sumula', num:'Súmula Vinc. 13',imp:'max', area:'constitucional', lei:'Art. 37, caput CF/88', enun:'A nomeação de cônjuge, companheiro ou parente em linha reta, colateral ou por afinidade, até o terceiro grau, inclusive, da autoridade nomeante ou de servidor da mesma pessoa jurídica, investido em cargo de direção, chefia ou assessoramento, para o exercício de cargo em comissão ou de confiança, ou, ainda, de função gratificada, viola a Constituição Federal.', ctx:'Nepotismo em cargos comissionados. Exceção: cargos políticos (Secretários municipais, por exemplo) — a Súmula não se aplica quando há cargo político (distinção STF).'},
+  {id:'stf_sv37',  tribunal:'STF', tipo:'sumula', num:'Súmula Vinc. 37',imp:'alta', area:'constitucional',lei:'Art. 37, XIII CF/88',  enun:'Não cabe ao Poder Judiciário, que não tem função legislativa, aumentar vencimentos de servidores públicos sob o fundamento de isonomia.', ctx:'Vedação ao ativismo judicial na equiparação remuneratória. O Judiciário não pode substituir o legislador para conceder aumento. Decorre do princípio da separação dos poderes.'},
+  {id:'stf_t822',  tribunal:'STF', tipo:'tema',   num:'Tema 822 (RG)', imp:'max', area:'constitucional', lei:'Art. 37, II CF/88',    enun:'Servidores públicos não têm direito adquirido à manutenção do regime jurídico anterior, podendo a lei alterar as regras relativas à carreira e à remuneração.', ctx:'Inexiste direito adquirido a regime jurídico (Súmula 654 STF). Mas há proteito do teto remuneratório (art. 37, XI CF/88) e da irredutibilidade de vencimentos (art. 37, XV CF/88).'},
+  // ── TCE-BA ──
+  {id:'tceba_01',  tribunal:'TCE', tipo:'custom', num:'Resolução TCE-BA 09/99',imp:'alta', area:'tributario',  lei:'Lei 7.014/96',  enun:'A Secretaria da Fazenda do Estado da Bahia deve observar os princípios da legalidade, impessoalidade, moralidade e eficiência na autuação de contribuintes do ICMS, inclusive nos procedimentos de substituição tributária.', ctx:'Diretriz do TCE-BA para fiscalização do ICMS. Importância para o auditor: procedimentos fiscais devem ter base legal expressa e motivação suficiente.'},
+  {id:'tceba_02',  tribunal:'TCE', tipo:'custom', num:'Acórdão TCE-BA 007/2021',imp:'med', area:'financeiro',  lei:'LRF',          enun:'A inobservância dos limites de despesa com pessoal previstos na LRF configura ato irregular de gestão, sujeitando o gestor a sanção de inabilitação e multa, independentemente de dano ao erário.', ctx:'Reforça que o descumprimento dos arts. 19 e 20 da LRF é ato irregular independentemente de dano. Relevante para provas sobre responsabilidade fiscal e atribuições do auditor fiscal.'},
+  // ── REFORMA TRIBUTÁRIA ──
+  {id:'stf_t939',  tribunal:'STF', tipo:'tema',   num:'Tema 939 (RG)', imp:'max', area:'tributario',      lei:'EC 132/2023',         enun:'É constitucional a Reforma Tributária que unifica tributos sobre consumo (IBS, CBS, IS), extinguindo ICMS, ISS, IPI, PIS e COFINS de forma gradual na transição 2026–2033.', ctx:'Legitimidade constitucional do novo sistema tributário. O IBS é de competência compartilhada entre Estados e Municípios, gerido pelo Comitê Gestor. A CBS é federal. O IS incide sobre bens e serviços prejudiciais. Transição crucial para o concurso.'},
+];
+
+// ════════════════════════════════════════════════════════
+//  JURISPRUDÊNCIA — STATE e FUNÇÕES
+// ════════════════════════════════════════════════════════
+
+let filtJF = 'todos';
+
+function setJF(f, el){
+  filtJF = f;
+  document.querySelectorAll('#jf-bar .pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderJur();
+}
+
+function getJurFilt(){
+  const q = (document.getElementById('s-jur')?.value || '').toLowerCase();
+  const all = [...JUR_BASE, ...(ST.jur_custom || [])];
+  return all.filter(j => {
+    const mf =
+      filtJF === 'todos' ? true :
+      filtJF === 'STF'   ? j.tribunal === 'STF' :
+      filtJF === 'STJ'   ? j.tribunal === 'STJ' :
+      filtJF === 'TCE'   ? j.tribunal === 'TCE' :
+      filtJF === 'max'   ? j.imp === 'max' :
+      j.area === filtJF;
+    const mq = !q ||
+      j.num.toLowerCase().includes(q) ||
+      j.enun.toLowerCase().includes(q) ||
+      j.ctx.toLowerCase().includes(q) ||
+      (j.lei || '').toLowerCase().includes(q);
+    return mf && mq;
+  });
+}
+
+function renderJur(){
+  const items = getJurFilt();
+  const all = [...JUR_BASE, ...(ST.jur_custom || [])];
+
+  // KPI
+  const kpi = document.getElementById('kpi-jur');
+  if(kpi){
+    const lidas   = all.filter(j => (ST.jur_st||{})[j.id] === 'lido').length;
+    const revisao = all.filter(j => (ST.jur_st||{})[j.id] === 'revisao').length;
+    const max     = all.filter(j => j.imp === 'max').length;
+    const stf     = all.filter(j => j.tribunal === 'STF').length;
+    const stj     = all.filter(j => j.tribunal === 'STJ').length;
+    kpi.innerHTML = `
+      <div class="kpi"><div class="kpi-bar" style="background:var(--acc)"></div>
+        <div class="kpi-lbl">Lidas</div><div class="kpi-val">${lidas}</div><div class="kpi-sub">de ${all.length} jurs.</div></div>
+      <div class="kpi"><div class="kpi-bar" style="background:var(--gold)"></div>
+        <div class="kpi-lbl">Em Revisão</div><div class="kpi-val">${revisao}</div><div class="kpi-sub">para revisar</div></div>
+      <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div>
+        <div class="kpi-lbl">Importância Máxima</div><div class="kpi-val">${max}</div><div class="kpi-sub">jurs. críticas</div></div>
+      <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div>
+        <div class="kpi-lbl">STF</div><div class="kpi-val">${stf}</div><div class="kpi-sub">precedentes</div></div>
+      <div class="kpi"><div class="kpi-bar" style="background:var(--purple)"></div>
+        <div class="kpi-lbl">STJ</div><div class="kpi-val">${stj}</div><div class="kpi-sub">precedentes</div></div>`;
+  }
+
+  const c = document.getElementById('jur-container');
+  if(!items.length){
+    c.innerHTML = '<div style="text-align:center;padding:50px;color:var(--tx3);font-size:14px">Nenhuma jurisprudência encontrada.</div>';
+    return;
+  }
+
+  // agrupar por área se filtro = todos
+  let html = '';
+  if(filtJF === 'todos' || filtJF === 'max'){
+    const grupos = {};
+    items.forEach(j => {
+      if(!grupos[j.area]) grupos[j.area] = [];
+      grupos[j.area].push(j);
+    });
+    const labels = {tributario:'Tributário', constitucional:'Constitucional', administrativo:'Administrativo', financeiro:'Financeiro', outro:'Outros'};
+    html = Object.entries(grupos).map(([area, js]) =>
+      `<div class="sec-head"><span class="sec-tag">${labels[area]||area}</span><div class="sec-line"></div></div>` +
+      js.map(j => renderJurCard(j)).join('')
+    ).join('');
+  } else {
+    html = items.map(j => renderJurCard(j)).join('');
+  }
+  c.innerHTML = html;
+}
+
+function renderJurCard(j){
+  const numCls =
+    j.tipo === 'sumula' ? 'jur-num-sumula' :
+    j.tipo === 'tema'   ? 'jur-num-tema' :
+    j.tipo === 'oj'     ? 'jur-num-oj' :
+    j.tipo === 're'     ? 'jur-num-re' : 'jur-num-custom';
+  const tribCls =
+    j.tribunal === 'STF' ? 'jur-stf' :
+    j.tribunal === 'STJ' ? 'jur-stj' :
+    j.tribunal === 'TCE' ? 'jur-tce' : 'jur-custom-t';
+  const impCls = j.imp === 'max' ? 'imp-max' : j.imp === 'alta' ? 'imp-alta' : 'imp-med';
+  const impLbl = j.imp === 'max' ? 'MÁXIMA' : j.imp === 'alta' ? 'ALTA' : 'MÉD';
+  const areaCls = j.area || 'outro';
+  const st = (ST.jur_st || {})[j.id] || '';
+
+  return `<div class="jur-card">
+    <div class="jur-card-hdr">
+      <span class="jur-num ${numCls}">${j.num}</span>
+      <div class="jur-body">
+        <div class="jur-enunciado">${j.enun}</div>
+        ${j.ctx ? `<div class="jur-ctx">💡 ${j.ctx}</div>` : ''}
+        <div class="jur-tags">
+          <span class="jur-tag ${areaCls}">${areaCls.charAt(0).toUpperCase()+areaCls.slice(1)}</span>
+          ${j.lei ? `<span class="jur-tag" style="color:var(--tx2)">${j.lei}</span>` : ''}
+        </div>
+        <div class="jur-status">
+          <button class="jsb jsb-ok ${st==='lido'?'act':''}"    onclick="toggleJurST('${j.id}','lido')"   >✓ Lida</button>
+          <button class="jsb jsb-rv ${st==='revisao'?'act':''}" onclick="toggleJurST('${j.id}','revisao')">↻ Revisar</button>
+          ${st==='lido'?'<span style="font-size:11px;color:var(--grn);font-weight:700;margin-left:4px">✓ Lida</span>':st==='revisao'?'<span style="font-size:11px;color:var(--gold);font-weight:700;margin-left:4px">↻ Revisão</span>':''}
+        </div>
+      </div>
+      <div class="jur-meta">
+        <span class="jur-tribunal ${tribCls}">${j.tribunal}</span>
+        <span class="jur-imp ${impCls}">${impLbl}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleJurST(id, ns){
+  if(!ST.jur_st) ST.jur_st = {};
+  ST.jur_st[id] = ST.jur_st[id] === ns ? '' : ns;
+  save(); renderJur();
+  showToast(ST.jur_st[id] === 'lido' ? '✓ Jurisprudência marcada como lida' : ST.jur_st[id] === 'revisao' ? '↻ Em revisão' : 'Pendente');
+}
+
+function salvarJur(){
+  const tribunal = document.getElementById('mj-tribunal').value;
+  const tipo     = document.getElementById('mj-tipo').value;
+  const num      = document.getElementById('mj-num').value.trim();
+  const imp      = document.getElementById('mj-imp').value;
+  const enun     = document.getElementById('mj-enun').value.trim();
+  const ctx      = document.getElementById('mj-ctx').value.trim();
+  const area     = document.getElementById('mj-area').value;
+  const lei      = document.getElementById('mj-lei').value.trim();
+  if(!num || !enun){ showToast('⚠ Preencha referência e enunciado'); return; }
+  if(!ST.jur_custom) ST.jur_custom = [];
+  const entry = { id:'jc_'+Date.now(), tribunal, tipo, num, imp, area, lei, enun, ctx };
+  ST.jur_custom.push(entry);
+  save(); fecharModal('m-jur'); renderJur();
+  showToast('✓ Jurisprudência adicionada: '+num);
+  ['mj-num','mj-enun','mj-ctx','mj-lei'].forEach(x => document.getElementById(x).value = '');
+}
+
+init();
+</script>
+</body>
+</html>
