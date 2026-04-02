@@ -73,8 +73,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 .lei-chev{color:var(--tx3);font-size:13px;transition:transform .2s;flex-shrink:0;}
 .lei-chev.open{transform:rotate(180deg);}
 .lei-body{border-top:1.5px solid var(--border2);display:none;}.lei-body.open{display:block;}
-.lei-del-btn{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:4px 8px;border-radius:4px;transition:all .15s;opacity:.5;}
-.lei-del-btn:hover{opacity:1;background:var(--red-dim);}
+.lei-del-btn{background:var(--red-dim);border:1.5px solid rgba(255,112,112,.3);color:var(--red);cursor:pointer;font-size:13px;padding:5px 10px;border-radius:6px;transition:all .15s;opacity:.7;flex-shrink:0;}
+.lei-del-btn:hover{opacity:1;background:rgba(255,112,112,.25);border-color:rgba(255,112,112,.5);}
 
 .at{width:100%;border-collapse:collapse;}
 .at th{padding:10px 16px;font-size:11px;letter-spacing:1.2px;color:var(--tx3);background:var(--panel2);border-bottom:1.5px solid var(--border2);text-align:left;font-family:'JetBrains Mono',monospace;font-weight:700;text-transform:uppercase;}
@@ -877,7 +877,7 @@ function renderLeiCard(l,idx){
         <div class="lei-prog-bar"><div class="lei-prog-fill" style="width:${pct}%;background:${l.cor}"></div></div>
         <div class="lei-pct" style="color:${l.cor}">${pct}%</div>
       </div>
-      ${isCustom?`<button class="lei-del-btn" onclick="event.stopPropagation();excluirLei('${esc(l.id)}')" title="Excluir lei">🗑</button>`:`<button class="lei-del-btn" onclick="event.stopPropagation();excluirLeiBase('${esc(l.id)}')" title="Ocultar lei">👁‍🗨</button>`}
+      ${isCustom?`<button class="lei-del-btn" onclick="event.stopPropagation();excluirLei('${esc(l.id)}')" title="Excluir lei">🗑</button>`:`<button class="lei-del-btn" onclick="event.stopPropagation();excluirLeiBase('${esc(l.id)}')" title="Excluir lei">🗑</button>`}
       <span class="lei-chev ${isOpen?'open':''}" id="chev-${l.id}">▼</span>
     </div>
     <div class="lei-body ${isOpen?'open':''}" id="body-${l.id}">
